@@ -102,6 +102,7 @@ typedef struct
 
 extern void foo(void);
 extern PWindow *createDefaultWindow(void);
+extern int get_mouse(int sw, int sh, int *outx, int *outy);
 
 
 
@@ -213,6 +214,15 @@ end
 
 local function getMouseState()
     local state = {}
+    
+    local R_x = ffi.new("int[1]")
+    local R_y = ffi.new("int[1]")
+    local b = app.get_mouse(1360,768,R_x, R_y);
+--    print("xy = ",R_x[0], R_y[0]);
+    state.buttonCode = b
+    state.x = R_x[0]
+    state.y = R_y[0]
+    return state;
 end
 
 pi = {}

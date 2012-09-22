@@ -201,6 +201,7 @@ int get_mouse(int sw, int sh, int *outx, int *outy)
         if (y>height) y=height;
    }
 _exit:
+//   printf("xy = %d %d\n",x,y);
    if (outx) *outx = x;
    if (outy) *outy = y;
    return 0;
