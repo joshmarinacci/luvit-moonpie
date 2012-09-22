@@ -1,5 +1,11 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
 #include <assert.h>
+#include <unistd.h>
+#include <fcntl.h>
+
 #include "bcm_host.h"
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
@@ -147,6 +153,7 @@ void foo(void)
     puts("Hello, I'm a shared library");
 }
 
+
 PWindow* createDefaultWindow() 
 {    
    printf("creating a default window\n");
@@ -158,3 +165,44 @@ PWindow* createDefaultWindow()
    init_ogl(state);    
    return state;
 }
+
+
+/* get the current mouse position and buttons*/
+int get_mouse(int sw, int sh, int *outx, int *outy)
+{
+    static int fd = -1;
+    const int width=sw, height=sh;
+    static int x=800, y=400;
+    const int XSIGN = 1<<4, YSIGN = 1<<5;
+    if (fd<0) {
+       fd = open("/dev/input/mouse0",O_RDONLY|O_NONBLOCK);
+    }
+    if (fd>=0) {
+        struct {char buttons, dx, dy; } m;
+        while (1) {
+           int bytes = read(fd, &m, sizeof m);
+           if (bytes < (int)sizeof m) goto _exit;
+           if (m.buttons&8) {
+              break; // This bit should always be set
+           }
+           read(fd, &m, 1); // Try to sync up again
+        }
+        if (m.buttons&3)
+           return m.buttons&3;
+        x+=m.dx;
+        y+=m.dy;
+        if (m.buttons&XSIGN)
+           x-=256;
+        if (m.buttons&YSIGN)
+           y-=256;
+        if (x<0) x=0;
+        if (y<0) y=0;
+        if (x>width) x=width;
+        if (y>height) y=height;
+   }
+_exit:
+   if (outx) *outx = x;
+   if (outy) *outy = y;
+   return 0;
+}       
+

@@ -10,7 +10,7 @@ echo "linking into a shared library"
 gcc -shared $LDFLAGS -o libjoshpi.so joshpi.o
 
 echo "compiling and linking a test app"
-gcc -L/home/josh/glplay_01/ -Wall $INCLUDES -o joshpitest joshpitest.c -ljoshpi
+gcc -L./ -Wall $INCLUDES -o joshpitest joshpitest.c -ljoshpi
 
 LD_LIBRARY_PATH=/home/josh/luvit-moonpie/experiments/rpi:$LD_LIBRARY_PATH
 echo "running the test app"
