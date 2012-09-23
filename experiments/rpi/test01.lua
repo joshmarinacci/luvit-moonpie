@@ -131,7 +131,11 @@ GL_VERTEX_SHADER        = 0x8B31
 GL_FRAGMENT_SHADER      = 0x8B30
 GL_ARRAY_BUFFER         = 0x8892
 GL_STATIC_DRAW          = 0x88E4
+GL_DEPTH_BUFFER_BIT     = 0x00000100
+GL_STENCIL_BUFFER_BIT   = 0x00000400
 GL_COLOR_BUFFER_BIT     = 0x00004000
+
+
 GL_FLOAT                = 0x1406
 GL_FALSE                = 0
 GL_TRUE                 = 1
@@ -269,11 +273,14 @@ local vertexArray = ffi.new(
 
 local count = 0;
 
+print("width = ", window.screen_width, " ", window.screen_height)
+
 while true do
    gles.glViewport(0,0,window.screen_width, window.screen_height)
-   gl.glClearColor( 0.08, 0.06, math.random()/4, 1)
-   gl.glClear ( GL_COLOR_BUFFER_BIT )
-   gl.glUniform1f( loc_phase, phase )
+   gles.glClearColor( 0.08, 0.86, 0, 1)
+   gles.glClear( GL_COLOR_BUFFER_BIT )
+   
+   gles.glUniform1f( loc_phase, phase )
    phase =  math.fmod( phase + 0.5, 2 * 3.141 )
  
    if update_pos  then
@@ -292,29 +299,16 @@ while true do
       update_pos = false;
    end
  
-   gl.glUniform4f( loc_offset, offset_x , offset_y, 0.0 , 0.0 )
-   gl.glVertexAttribPointer( loc_position, 3, GL_FLOAT, GL_FALSE, 0, vertexArray )
-   gl.glEnableVertexAttribArray( loc_position )
-   gl.glDrawArrays( GL_TRIANGLE_STRIP, 0, 5 )
- 
+   gles.glUniform4f( loc_offset, offset_x , offset_y, 0.0 , 0.0 )
+   gles.glVertexAttribPointer( loc_position, 3, GL_FLOAT, GL_FALSE, 0, vertexArray )
+   gles.glEnableVertexAttribArray( loc_position )
+   gles.glDrawArrays( GL_TRIANGLE_STRIP, 0, 5 )
    egl.eglSwapBuffers(window.display, window.surface)
+
    count = count + 1
    if(count == 100) then
         break
    end
 end
 
-
---[[
-gles.glClearColor(0, 0.4, 0.2, 1.0)
-gles.glClear(GL_COLOR_BUFFER_BIT)
-gles.glViewport(0,0,window.screen_width, window.screen_height)
-gles.glVertexAttribPointer(positionSlot, 3, GL_FLOAT, GL_FALSE, 0, Vertices)
-gles.glVertexAttribPointer(colorSlot,    4, GL_FLOAT, GL_FALSE, 0, Indices)
-gles.glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_BYTE, ffi.cast("GLvoid*",0))
-egl.eglSwapBuffers(window.display, window.surface)
-]]
-
---print("sleeping for five seconds")
---sleep(5)
 

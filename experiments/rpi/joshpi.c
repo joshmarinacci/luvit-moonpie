@@ -107,12 +107,11 @@ static void init_ogl(PWindow *state)
    
    
    //now we have a real opengl context so we can do stuff
-   glClearColor(0.8,0.9,0.2,1);
+   glClearColor(1,0,0,1);
    glClear( GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    eglSwapBuffers(state->display, state->surface);
    
-   printf("got to the real opengl context");
-   
+   printf("joshpi.c: got to the real opengl context\n");
 
 /*
    //init the shaders
