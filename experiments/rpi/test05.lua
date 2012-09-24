@@ -5,8 +5,8 @@ test loading an image from disk with FreeImage
 ]]
 
 local ffi = require("ffi")
-local pi = require("moonpie")
-local util = require("util")
+--local pi = require("moonpie")
+--local util = require("util")
 
 
 -- freom the freeimage .h file
@@ -55,23 +55,27 @@ typedef int FREE_IMAGE_FORMAT; enum FREE_IMAGE_FORMAT {
 
 typedef struct FIBITMAP FIBITMAP; struct FIBITMAP { void *data; };
 
+typedef uint8_t BYTE;
+
 FREE_IMAGE_FORMAT FreeImage_GetFileType(const char *filename, int size);
 FIBITMAP *FreeImage_Load(FREE_IMAGE_FORMAT fif, const char *filename, int flags);
 FIBITMAP *FreeImage_ConvertTo32Bits(FIBITMAP *dib);
 void FreeImage_Unload(FIBITMAP *dib);
 unsigned FreeImage_GetWidth(FIBITMAP *dib);
 unsigned FreeImage_GetHeight(FIBITMAP *dib);
+BYTE *   FreeImage_GetBits(FIBITMAP *dib);
 
 ]]
 
-local img = ffi.load("/opt/vc/lib/libFreeImage.so")
+local img = ffi.load("/usr/local/Cellar/freeimage/3.15.1/lib/libfreeimage.dylib")
 
 
 print("done");
 
 local textureFile = ffi.string("foo.png");
 local formato = img.FreeImage_GetFileType(textureFile,0);
-local imagen  = img.FreeImage_Load(formato, textureFile);
+
+local imagen  = img.FreeImage_Load(formato, textureFile, 0);
 local temp = imagen;
 imagen = img.FreeImage_ConvertTo32Bits(imagen);
 img.FreeImage_Unload(temp);
@@ -79,6 +83,17 @@ local w = img.FreeImage_GetWidth(imagen);
 local h = img.FreeImage_GetHeight(imagen);
 
 print("width = ", w, " height = ",h);
+local pixels = img.FreeImage_GetBits(imagen);
+
+print("got the pixels ",pixels);
+for j=0, w*h, 1 do
+print(pixels[j*4+0],pixels[j*4+1],pixels[j*4+2],pixels[j*4+3]);
+--		textura[j*4+0]= pixeles[j*4+2];
+--		textura[j*4+1]= pixeles[j*4+1];
+--		textura[j*4+2]= pixeles[j*4+0];
+--		textura[j*4+3]= pixeles[j*4+3];
+--		//cout<<j<<": "<<textura[j*4+0]<<"**"<<textura[j*4+1]<<"**"<<textura[j*4+2]<<"**"<<textura[j*4+3]<<endl;
+end
 
 --[[
 
