@@ -4,7 +4,7 @@ draw a square on the screen using the current state of the mouse
 
 ]]
 local ffi = require("ffi");
-local pi = require("moonpiemac")
+local pi = require("moonpie")
 local util = require("util")
 
 window = pi.createFullscreenWindow()

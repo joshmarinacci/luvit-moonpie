@@ -11,6 +11,8 @@ EGLDisplay eglGetDisplay(EGLNativeDisplayType display_id);
 ]]
 
 
+require("gl2headers")
+
 -- eglplatform.h
 ffi.cdef[[
 typedef void *EGLNativeDisplayType;
@@ -37,7 +39,6 @@ EGLBoolean eglSwapBuffers(EGLDisplay dpy, EGLSurface surface);
 
 
 
-require("gl2headers")
 
 
 --joshpi.h
@@ -84,8 +85,8 @@ pi = {}
 
 
 app = ffi.load("./libjoshpi.so")
-GL_VERTEX_SHADER        = 0x8B31
-GL_FRAGMENT_SHADER      = 0x8B30
+pi.GL_VERTEX_SHADER        = 0x8B31
+pi.GL_FRAGMENT_SHADER      = 0x8B30
 GL_ARRAY_BUFFER         = 0x8892
 GL_STATIC_DRAW          = 0x88E4
 pi.GL_COLOR_BUFFER_BIT     = 0x00004000
@@ -218,7 +219,7 @@ local function getMouseState()
     local b = app.get_mouse(1360,768,R_x, R_y);
     state.buttonCode = b
     state.x = R_x[0]
-    state.y = R_y[0]
+    state.y = 768-R_y[0]
     return state;
 end
 
