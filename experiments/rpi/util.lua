@@ -34,10 +34,10 @@ function buildShaderProgram(vshader_source, fshader_source)
     local prog = pi.gles.glCreateProgram()
     showProgramLog(prog);
     checkError();
-    local fshader = pi.loadShader(fshader_source, GL_FRAGMENT_SHADER)
+    local fshader = pi.loadShader(fshader_source, pi.GL_FRAGMENT_SHADER)
     checkError();
     showProgramLog(prog);
-    local vshader = pi.loadShader(vshader_source, GL_VERTEX_SHADER)
+    local vshader = pi.loadShader(vshader_source, pi.GL_VERTEX_SHADER)
     checkError();
     showProgramLog(prog);
     pi.gles.glAttachShader( prog, vshader )

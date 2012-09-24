@@ -3,7 +3,7 @@
 Test getting the current state of the mouse
 
 ]]
-local pi = require("moonpie")
+local pi = require("moonpiemac")
 
 window = pi.createFullscreenWindow()
 
@@ -15,10 +15,11 @@ while true do
     if(
         not (mouse2.x == mouse.x)
         or not(mouse2.y == mouse.y)
-        or not(mouse2.buttonCode == mouse.buttonCode)
+        or not(mouse2.leftdown == mouse.leftdown)
         ) then
-        print("mouse = ", mouse2.x, mouse2.y, " button = ", mouse2.buttonCode)
+        print("mouse = ", mouse2.x, mouse2.y, " button = ", mouse2.leftdown)
     end
+    window.swap()
     mouse = mouse2
 end
 
