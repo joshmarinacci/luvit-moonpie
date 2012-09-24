@@ -71,19 +71,28 @@ void   glLinkProgram (GLuint program);
 void   glUseProgram (GLuint program);
 int    glGetAttribLocation (GLuint program, const GLchar* name);
 void   glEnableVertexAttribArray (GLuint index);
-void   glGenBuffers (GLsizei n, GLuint* buffers);
-void   glBindBuffer (GLenum target, GLuint buffer);
+void   glGetProgramInfoLog (GLuint program, GLsizei bufsize, GLsizei* length, GLchar* infolog);
+
+void   glGenBuffers  (GLsizei n, GLuint* buffers );
+void   glGenTextures (GLsizei n, GLuint* textures);
+
+void   glBindBuffer  (GLenum target, GLuint buffer );
+void   glBindTexture (GLenum target, GLuint texture);
+
 void   glBufferData (GLenum target, GLsizeiptr size, const GLvoid* data, GLenum usage);
 void   glClearColor (GLclampf red, GLclampf green, GLclampf blue, GLclampf alpha);
 void   glClear (GLbitfield mask);
+void   glEnable (GLenum cap);
 void   glViewport (GLint x, GLint y, GLsizei width, GLsizei height);
 void   glVertexAttribPointer (GLuint indx, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid* ptr);
+
 void   glVertexAttrib4f (GLuint indx, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 void   glDrawElements (GLenum mode, GLsizei count, GLenum type, const GLvoid* indices);
 void   glGetShaderiv (GLuint shader, GLenum pname, GLint* params);
 int    glGetUniformLocation (GLuint program, const GLchar* name);
 
 void   glUniform1f (GLint location, GLfloat x);
+void   glUniform1i (GLint location, GLint   x);
 void   glUniform2f (GLint location, GLfloat x, GLfloat y);
 void   glUniform3f (GLint location, GLfloat x, GLfloat y, GLfloat z);
 void   glUniform4f (GLint location, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
@@ -91,6 +100,11 @@ void   glUniformMatrix4fv (GLint location, GLsizei count, GLboolean transpose, c
 
 void   glDrawArrays (GLenum mode, GLint first, GLsizei count);
 void   glGetShaderInfoLog (GLuint shader, GLsizei bufsize, GLsizei* length, GLchar* infolog);
+
+
+void   glTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* pixels);
+void   glTexParameteri (GLenum target, GLenum pname, GLint param);
+void   glActiveTexture (GLenum texture);
 
 GLenum glGetError (void);
 
@@ -157,7 +171,7 @@ GL_TRIANGLES            =          0x0004
 pi.GL_TRIANGLE_STRIP       =          0x0005
 GL_TRIANGLE_FAN         =          0x0006
 
-GL_UNSIGNED_BYTE        = 0x1401
+pi.GL_UNSIGNED_BYTE        = 0x1401
 
 GL_COMPILE_STATUS       = 0x8B81
 GL_INFO_LOG_LENGTH      = 0x8B84
@@ -169,6 +183,34 @@ pi.GL_INVALID_ENUM      = 0x0500
 pi.GL_INVALID_VALUE     = 0x0501
 pi.GL_INVALID_OPERATION = 0x0502
 pi.GL_OUT_OF_MEMORY     = 0x0505
+
+pi.GL_TEXTURE_2D               =      0x0DE1
+pi.GL_CULL_FACE                =      0x0B44
+pi.GL_BLEND                    =      0x0BE2
+pi.GL_DITHER                   =      0x0BD0
+pi.GL_STENCIL_TEST             =      0x0B90
+pi.GL_DEPTH_TEST               =      0x0B71
+pi.GL_SCISSOR_TEST             =      0x0C11
+pi.GL_POLYGON_OFFSET_FILL      =      0x8037
+pi.GL_SAMPLE_ALPHA_TO_COVERAGE =      0x809E
+pi.GL_SAMPLE_COVERAGE          =      0x80A0
+
+
+-- texture stuff
+pi.GL_NEAREST                  =      0x2600
+pi.GL_LINEAR                   =      0x2601
+pi.GL_TEXTURE_MAG_FILTER       =      0x2800
+pi.GL_TEXTURE_MIN_FILTER       =      0x2801
+pi.GL_TEXTURE_WRAP_S           =      0x2802
+pi.GL_TEXTURE_WRAP_T           =      0x2803
+pi.GL_REPEAT                   =      0x2901
+pi.GL_CLAMP_TO_EDGE            =      0x812F
+pi.GL_MIRRORED_REPEAT          =      0x8370
+-- texture units
+pi.GL_TEXTURE0                 =      0x84C0
+
+-- image formats
+pi.GL_RGBA                     =      0x1908
 
 
 gles = ffi.load("/opt/vc/lib/libGLESv2.so")
