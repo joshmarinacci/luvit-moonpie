@@ -5,8 +5,8 @@ test loading an image from disk with FreeImage
 ]]
 
 local ffi = require("ffi")
-local pi = require("moonpie")
-local util = require("util")
+--local pi = require("moonpie")
+--local util = require("util")
 
 
 -- freom the freeimage .h file
