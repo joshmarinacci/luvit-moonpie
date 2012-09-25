@@ -68,6 +68,7 @@ void   glGetShaderInfoLog (GLuint shader, GLsizei bufsize, GLsizei* length, GLch
 
 
 void   glTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const GLvoid* pixels);
+void   glTexSubImage2D (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const GLvoid* pixels);
 void   glTexParameteri (GLenum target, GLenum pname, GLint param);
 void   glActiveTexture (GLenum texture);
 

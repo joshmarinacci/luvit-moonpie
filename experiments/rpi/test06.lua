@@ -7,7 +7,7 @@ test loading a ttf font from disk and drawing on screen
 local ffi = require("ffi")
 local pi = require("moonpiemac")
 local util = require("util")
-
+local string = require("string")
 
 ffi.cdef[[
   typedef signed long  FT_Long;
@@ -261,7 +261,7 @@ local face = R_face[0]
 print("the face = ",face)
 
 -- set to 48 pt
-freetype.FT_Set_Pixel_Sizes(face,0,10)
+freetype.FT_Set_Pixel_Sizes(face,0,30)
 print("set the size to 14 pixels")
 
 print("num faces = ",face.num_faces)
@@ -330,6 +330,21 @@ print("metrics linear hori advance = ",g.linearHoriAdvance)
 print("metrics linear vert advance = ",g.linearVertAdvance)
 
 
+local w = 0
+local h = 0
+for i=32,128,1 do
+    ret = freetype.FT_Load_Char(face, i, FT_LOAD_RENDER)
+    if not ret == 0 then
+        print("could not load character",i)
+    end
+    w = w + g.bitmap.width
+    if(g.bitmap.rows > h) then
+        h = g.bitmap.rows
+    end
+end
+
+print("final width, height = ", w, ",", h)
+
 
 
 
@@ -366,51 +381,64 @@ local texId = R_texId[0]
 pi.gles.glBindTexture(pi.GL_TEXTURE_2D, texId)
 checkError()
 --pi.gles.glUniform1i(uniform_tex, 0)
-pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_NEAREST)
-pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_NEAREST)
+--pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_NEAREST)
+--pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_NEAREST)
 pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_WRAP_S, pi.GL_CLAMP_TO_EDGE)
 pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_WRAP_T, pi.GL_CLAMP_TO_EDGE)
---pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_LINEAR)
---pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_LINEAR)
+pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_LINEAR)
+pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_LINEAR)
 checkError()
 
---[[
+
+
+
 -- special settings because we are using a 1 byte image
-glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
---]]
+--glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 pi.gles.glPixelStorei(pi.GL_UNPACK_ALIGNMENT, 1)
+-- create an empty texture of the right size
 pi.gles.glTexImage2D(
     pi.GL_TEXTURE_2D, 
     0, 
     pi.GL_RGBA, 
-    g.bitmap.width,
-    g.bitmap.rows,
+    w,
+    h,
     0, 
     pi.GL_ALPHA,
     pi.GL_UNSIGNED_BYTE,
-    g.bitmap.buffer);
+    nil);
 
+-- copy the glyphs into the texture
 
---[[
--- set up a VBO to hold vertex and texture coords
-GLuint vbo;
-glGenBuffers(1, &vbo);
-glEnableVertexAttribArray(attribute_coord);
-glBindBuffer(GL_ARRAY_BUFFER, vbo);
-glVertexAttribPointer(attribute_coord, 4, GL_FLOAT, GL_FALSE, 0, 0);
---]]
+local metrics = {}
 
---[[
-local attribute_coord = pi.gles.glGetAttribLocation(prog, "coord")
-local R_vbo = ffi.new("GLuint[1]")
-print("rb = ",R_vbo)
-pi.gles.glGenBuffers(1, R_vbo)
-local vbo = R_vbo[0]
-print("vbo = ",vbo)
-pi.gles.glEnableVertexAttribArray(attribute_coord)
-pi.gles.glBindBuffer(pi.GL_ARRAY_BUFFER, vbo)
-pi.gles.glVertexAttribPointer(attribute_coord, 4, pi.GL_FLOAT, pi.GL_FALSE, 0, nil)
---]]
+local x = 0
+for i=32,128,1 do
+    --load each char
+    ret = freetype.FT_Load_Char(face, i, FT_LOAD_RENDER)
+    if not ret == 0 then
+        print("could not load character",i)
+    end
+    pi.gles.glTexSubImage2D(
+        pi.GL_TEXTURE_2D, 
+        0,
+        x,
+        0,
+        g.bitmap.width,
+        g.bitmap.rows,
+        pi.GL_ALPHA,
+        pi.GL_UNSIGNED_BYTE,
+        g.bitmap.buffer
+    )
+    metrics[i] = {
+        x=x,
+        w=g.bitmap.width,
+        h=g.bitmap.rows,
+    }
+    x = x + g.bitmap.width
+end
+
+print("finished loading the glyphs")
+
 
 local vshader_source = [[
 attribute vec4 Position;
@@ -472,57 +500,54 @@ local texSlot        = pi.gles.glGetUniformLocation(prog,"tex");
 checkError()
 
 
-local size = 100
 local count = 0;
 local projection = util.loadOrthoMatrix(0,window.width,0,window.height,-1,1)
 
 
-local coordsArray = ffi.new(
-   "float[10]",
-    0, 0,
-    0, 1,
-    1, 1,
-    1, 0,
-    0, 0
-    )
 
-print("successfully upload texture to the gpu")
+local textstring = "PENNY penny"
 
--- free the local memory
-
-local vertexArray = ffi.new(
-   "float[15]",
-   0,0, 0,
-   0, size, 0,
-   size, size, 0,
-   size,0, 0,
-   0,0, 0
-)
-
-
-
-
+       local fx = 0
+       local fo = 0.02
+       local fh = 1
+       local size_w = 30
+       local size_h = 30
 while true do
    pi.gles.glViewport(0,0,window.width, window.height)
-   pi.gles.glClearColor(1,0,1,1)
+   pi.gles.glClearColor(1,1,1,1)
    pi.gles.glClear( pi.GL_COLOR_BUFFER_BIT )
    checkError()
 
-   pi.gles.glUniform2f(xySlot, 100.0,100.0)
-   pi.gles.glUniformMatrix4fv(projectionSlot, 1, pi.GL_FALSE, projection )
-   pi.gles.glVertexAttribPointer(positionSlot, 3, pi.GL_FLOAT, pi.GL_FALSE, 0, vertexArray )
-   pi.gles.glVertexAttribPointer(coordSlot,    2, pi.GL_FLOAT, pi.GL_FALSE, 0, coordsArray )
-   
-   pi.gles.glUniform1i(texSlot, 0)
-   checkError()
-   pi.gles.glDrawArrays( pi.GL_TRIANGLE_STRIP, 0, 5 )
-   checkError()
+   local xoff = 0
+   for i=1, #textstring, 1 do
+       local n = string.byte(textstring,i)
+       --local n = 65
+       
+       
+       local fx = metrics[n].x/w
+       local fo = metrics[n].w/w
+       local fh = metrics[n].h/h
+       local size_w = metrics[n].w
+       local size_h = metrics[n].h
+       local arr = ffi.new("float[10]",  fx,0,  fx,fh,  fx+fo,fh,  fx+fo,0,  fx,0)
+       local vertexArray = ffi.new("float[15]", 0,0,0, 0,size_h,0, size_w,size_h,0, size_w,0,0, 0,0,0 )
+       
+       pi.gles.glUniform2f(xySlot, xoff,100.0)
+       pi.gles.glUniformMatrix4fv(projectionSlot,  1, pi.GL_FALSE, projection )
+       pi.gles.glVertexAttribPointer(positionSlot, 3, pi.GL_FLOAT, pi.GL_FALSE, 0, vertexArray )
+       pi.gles.glVertexAttribPointer(coordSlot,    2, pi.GL_FLOAT, pi.GL_FALSE, 0, arr )
+       pi.gles.glUniform1i(texSlot, 0)
+       pi.gles.glDrawArrays( pi.GL_TRIANGLE_STRIP, 0, 5 )
+       checkError()
+       xoff = xoff + metrics[n].w
+       --xoff = xoff + 30
+   end
    
    
    window.swap()
    checkError()
    count = count + 1
-   if(count == 60*1) then --wait for 10 seconds at 60fps
+   if(count == 60*20) then --wait for 10 seconds at 60fps
         break
    end
 end
