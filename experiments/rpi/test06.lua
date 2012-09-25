@@ -504,14 +504,11 @@ local count = 0;
 local projection = util.loadOrthoMatrix(0,window.width,0,window.height,-1,1)
 
 
+local arr = ffi.new("float[10]")
+local vertexArray = ffi.new("float[15]")
 
 local textstring = "PENNY penny"
 
-       local fx = 0
-       local fo = 0.02
-       local fh = 1
-       local size_w = 30
-       local size_h = 30
 while true do
    pi.gles.glViewport(0,0,window.width, window.height)
    pi.gles.glClearColor(1,1,1,1)
@@ -521,17 +518,13 @@ while true do
    local xoff = 0
    for i=1, #textstring, 1 do
        local n = string.byte(textstring,i)
-       --local n = 65
-       
-       
        local fx = metrics[n].x/w
        local fo = metrics[n].w/w
        local fh = metrics[n].h/h
        local size_w = metrics[n].w
        local size_h = metrics[n].h
-       local arr = ffi.new("float[10]",  fx,0,  fx,fh,  fx+fo,fh,  fx+fo,0,  fx,0)
-       local vertexArray = ffi.new("float[15]", 0,0,0, 0,size_h,0, size_w,size_h,0, size_w,0,0, 0,0,0 )
-       
+       arr[0] = fx; arr[2] = fx; arr[3] = fh; arr[4]=fx+fo; arr[5]=fh; arr[6]=fx+fo; arr[8]=fx;
+       vertexArray[4]=size_h; vertexArray[6]=size_w; vertexArray[7]=size_h; vertexArray[9]=size_w;
        pi.gles.glUniform2f(xySlot, xoff,100.0)
        pi.gles.glUniformMatrix4fv(projectionSlot,  1, pi.GL_FALSE, projection )
        pi.gles.glVertexAttribPointer(positionSlot, 3, pi.GL_FLOAT, pi.GL_FALSE, 0, vertexArray )
