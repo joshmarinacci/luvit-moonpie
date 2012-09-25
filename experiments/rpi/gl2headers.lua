@@ -71,6 +71,9 @@ void   glTexImage2D (GLenum target, GLint level, GLint internalformat, GLsizei w
 void   glTexParameteri (GLenum target, GLenum pname, GLint param);
 void   glActiveTexture (GLenum texture);
 
+void   glBlendFunc (GLenum sfactor, GLenum dfactor);
+void   glPixelStorei (GLenum pname, GLint param);
+
 GLenum glGetError (void);
 
 ]]

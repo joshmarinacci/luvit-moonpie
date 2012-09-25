@@ -126,8 +126,16 @@ pi.GL_MIRRORED_REPEAT          =      0x8370
 pi.GL_TEXTURE0                 =      0x84C0
 
 -- image formats
+pi.GL_ALPHA                    =      0x1906
+pi.GL_RGB                      =      0x1907
 pi.GL_RGBA                     =      0x1908
 pi.GL_UNSIGNED_BYTE        = 0x1401
+
+
+pi.GL_SRC_ALPHA                =      0x0302
+pi.GL_ONE_MINUS_SRC_ALPHA      =      0x0303
+pi.GL_UNPACK_ALIGNMENT         =      0x0CF5
+pi.GL_ARRAY_BUFFER             =      0x8892
 
 local function validate_shader(shader) 
 

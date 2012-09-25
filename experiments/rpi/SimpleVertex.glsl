@@ -15,6 +15,7 @@ mat4 translate(float x, float y, float z)
 void main()
 {
 /*    gl_Position = projection * translate(0.5,0.0,0.0) * Position ; */
-    gl_Position = translate(xy.x,xy.y,0.0) * Position *  projection; 
+/*    gl_Position = translate(xy.x,xy.y,0.0) * Position *  projection; */
+    gl_Position = Position ; 
 }
 
