@@ -159,7 +159,7 @@ end
 local function createFullscreenWindow()
     local window = {}
     window.width = 1024;
-    window.height = 768;
+    window.height = 600;
     
     local ret = glfw.glfwInit();
     if(ret == 0) then

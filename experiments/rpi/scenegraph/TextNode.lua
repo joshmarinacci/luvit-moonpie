@@ -15,6 +15,7 @@ TextNode = {}
 TextNode.x = 100
 TextNode.y = 200
 TextNode.color = {0.0,0.0,0.0}
+TextNode.textstring = "PENNY penny"
 
 function TextNode.loadShader() 
 
@@ -142,7 +143,6 @@ end
 function TextNode:init()
     self.coordArray = ffi.new("float[10]")
     self.vertexArray = ffi.new("float[15]")
-    self.textstring = "PENNY penny"
 end
 
 function TextNode:draw(scene)
