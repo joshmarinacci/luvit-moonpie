@@ -242,7 +242,7 @@ local ft = R_ft[0];
 
 local R_face = ffi.new("FT_Face[1]")
 print("created a new font face reference")
-ret = freetype.FT_New_Face(ft, "foo.ttf", 0, R_face)
+ret = freetype.FT_New_Face(ft, "ssp-reg.ttf", 0, R_face)
 if not ret == 0 then
     printf("Could not open the font")
     return 1

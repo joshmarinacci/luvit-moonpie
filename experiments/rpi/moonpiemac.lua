@@ -10,15 +10,23 @@ int  glfwInit( void );
 int  glfwOpenWindow( int width, int height, int redbits, int greenbits, int bluebits, int alphabits, int depthbits, int stencilbits, int mode );
 void glfwSetWindowTitle( const char *title );
 void glfwEnable( int token );
+void glfwDisable( int token);
 void glfwSwapBuffers( void );
 void glfwSwapInterval( int interval );
 void glfwTerminate( void );
 int  glfwGetWindowParam( int param );
+
 int  glfwGetKey( int key );
 void glfwGetMousePos( int *xpos, int *ypos );
-int glfwGetMouseButton( int button );
+int  glfwGetMouseButton( int button );
+
+typedef void (* GLFWkeyfun)(int,int);
+void glfwSetKeyCallback( GLFWkeyfun cbfun );
+void glfwPollEvents( void );
+
 double glfwGetTime( void );
 void glfwGetWindowSize( int *width, int *height );
+
 
 
 /* opengl stuff */
@@ -66,7 +74,7 @@ glfw = ffi.load("/Users/josh/projects/lua/glfw-2.7.6/lib/cocoa/libglfw.dylib");
 gl = ffi.load("/System/Library/Frameworks/OpenGL.framework/Libraries/libGL.dylib")
 
 GLFW_WINDOW      = 0x00010001;
-GLFW_STICKY_KEYS = 0x00030002
+pi.GLFW_STICKY_KEYS = 0x00030002
 GLFW_MOUSE_BUTTON_1     = 0
 GLFW_MOUSE_BUTTON_2     = 1
 GLFW_MOUSE_BUTTON_3     = 2
@@ -80,6 +88,11 @@ GLFW_MOUSE_BUTTON_LAST  = GLFW_MOUSE_BUTTON_8
 GLFW_MOUSE_BUTTON_LEFT  = GLFW_MOUSE_BUTTON_1
 GLFW_MOUSE_BUTTON_RIGHT = GLFW_MOUSE_BUTTON_2
 GLFW_MOUSE_BUTTON_MIDDLE = GLFW_MOUSE_BUTTON_3
+pi.GLFW_RELEASE     = 0
+pi.GLFW_PRESS       = 1
+pi.GLFW_KEY_SPECIAL = 256
+pi.GLFW_KEY_ESC     = (pi.GLFW_KEY_SPECIAL+1)
+pi.GLFW_AUTO_POLL_EVENTS   =  0x00030006
 
 
 pi.GL_VERTEX_SHADER        = 0x8B31
@@ -155,31 +168,42 @@ local function validate_shader(shader)
         print("result = ",ffi.string(buffer))
     end
 end
+pi.glfw = glfw;
 
 local function createFullscreenWindow()
     local window = {}
     window.width = 1024;
     window.height = 600;
     
-    local ret = glfw.glfwInit();
+    local ret = pi.glfw.glfwInit();
     if(ret == 0) then
         error("error starting GLFW");
     end
 
-    ret = glfw.glfwOpenWindow(window.width,window.height, 8,8,8,8, 0,0, GLFW_WINDOW)
+    ret = pi.glfw.glfwOpenWindow(window.width,window.height, 8,8,8,8, 0,0, GLFW_WINDOW)
     if(ret == 0) then
-        glfw.glfwTerminate()
+        pi.glfw.glfwTerminate()
         error("error opening GLFW window")
     end
-
-    glfw.glfwSetWindowTitle("Spinning Triangle")
-    glfw.glfwEnable( GLFW_STICKY_KEYS )
+    print("initing early. pi = ", pi)
+    
+    pi.glfw.glfwSetWindowTitle("Spinning Triangle")
+    --glfw.glfwEnable( pi.GLFW_STICKY_KEYS )
     --sync to vertical retrace (60fps usually)
-    glfw.glfwSwapInterval( 1 )
+    pi.glfw.glfwSwapInterval( 1 )
+    
+    pi.key_callback = function(key,state)
+        if window.keyboardCallback ~= nil then
+            local event = { key=key, state=state}
+            window.keyboardCallback(event)
+        end
+    end
+    --disable JIT for this callback to prevent segaults
+    jit.off(pi.glfw.glfwSetKeyCallback(ffi.cast("GLFWkeyfun",pi.key_callback)))
     
     print("successfully created a valid open window ", window.width, " ", window.height)
     window.swap = function()
-        glfw.glfwSwapBuffers();
+        pi.glfw.glfwSwapBuffers();
     end
     return window
 end
