@@ -51,6 +51,10 @@ function RectNode.loadShader()
     
     RectNode.shader = util.buildShaderProgram(vshader_source, fshader_source)
     RectNode.projectionSlot = pi.gles.glGetUniformLocation(RectNode.shader,"projection");
+    RectNode.positionSlot   = pi.gles.glGetAttribLocation(RectNode.shader,"Position");
+    RectNode.colorSlot      = pi.gles.glGetUniformLocation(RectNode.shader,"color");
+    RectNode.xySlot         = pi.gles.glGetUniformLocation(RectNode.shader,"xy");
+    pi.gles.glEnableVertexAttribArray(RectNode.positionSlot)
 end
 
 function RectNode:init()
@@ -64,17 +68,14 @@ function RectNode:init()
        w,0,0,
        0,0,0
     )
-    self.positionSlot   = pi.gles.glGetAttribLocation(self.shader,"Position");
-    self.colorSlot      = pi.gles.glGetUniformLocation(self.shader,"color");
-    self.xySlot         = pi.gles.glGetUniformLocation(self.shader,"xy");
-    pi.gles.glEnableVertexAttribArray(self.positionSlot)
 end
 
 function RectNode:draw(scene)
-    pi.gles.glUniformMatrix4fv(self.projectionSlot, 1, pi.GL_FALSE, scene.projection )   
-    pi.gles.glUniform3f(self.colorSlot, self.color[1], self.color[2], self.color[3])
-    pi.gles.glUniform2f(self.xySlot, self.x, self.y)
-    pi.gles.glVertexAttribPointer(self.positionSlot, 3, pi.GL_FLOAT, pi.GL_FALSE, 0, self.vertexArray )
+    pi.gles.glUseProgram( RectNode.shader )
+    pi.gles.glUniformMatrix4fv(RectNode.projectionSlot, 1, pi.GL_FALSE, scene.projection )   
+    pi.gles.glUniform3f(RectNode.colorSlot, self.color[1], self.color[2], self.color[3])
+    pi.gles.glUniform2f(RectNode.xySlot, self.x, self.y)
+    pi.gles.glVertexAttribPointer(RectNode.positionSlot, 3, pi.GL_FLOAT, pi.GL_FALSE, 0, self.vertexArray )
     pi.gles.glDrawArrays( pi.GL_TRIANGLE_STRIP, 0, 5 )
 end
 
