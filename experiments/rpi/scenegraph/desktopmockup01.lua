@@ -12,6 +12,15 @@ package.path = package.path .. ";../?.lua"
 local pi = require("moonpiemac")
 local util = require("util")
 local string = require("string")
+local EB = require("eventbus")
+
+EB = EB:new()
+EB:on("foo",function()
+    print("foo happens")
+end)
+
+EB:fire("foo", {x=0,y=1})
+
 --create a window
 scene = require("Scene")
 scene.window = pi.createFullscreenWindow()
@@ -57,10 +66,19 @@ table.insert(nodes, RectNode:new{x=30, y=400, width=8, height=40, color=red})
 
 
 
-local commandbarBG   = RectNode:new{x=260, y=550, width=500-20, height=40, color=white}
-local commandbarText = TextNode:new{x=270, y=550, textstring="list programs"}
-table.insert(nodes,commandbarBG)
-table.insert(nodes,commandbarText)
+require("TextField")
+
+
+local tf = TextField:new()
+table.insert(nodes,tf)
+
+EB:on("action",function(e)
+    if(e.source == tf) then
+        tf.text.textstring = ""
+    end
+end)
+
+
 
 mouseCallback = function(event)
     --print("I am the mouse ", event.x, " ", event.y)
@@ -70,29 +88,36 @@ local shiftDown = false
 
 scene.window.keyboardCallback = function(event) 
     --print("I am the keyboard ", event.key, event.state)
-    local txt = commandbarText.textstring
+    --local txt = commandbarText.textstring
     --printable chars
     if(event.key >= 32 and event.key<=100) then
-        if(event.state == 0) then
+        if(event.state == 1) then
             
             --A-Z
             if(event.key >= 65 and event.key <= 90) then
                 --handle caps vs lowercase
                 if(shiftDown) then
-                    txt = txt .. string.char(event.key+0)
+                    EB:fire("keytyped",{keycode=event.key+0})
+                    --txt = txt .. string.char(event.key+0)
                 else
-                    txt = txt .. string.char(event.key+(97-65))
+                    EB:fire("keytyped",{keycode=event.key+(97-65)})
+                    --txt = txt .. string.char(event.key+(97-65))
                 end
             else
-                txt = txt .. string.char(event.key)
+                EB:fire("keytyped",{keycode=event.key})
+                --txt = txt .. string.char(event.key)
             end
         end
     end
+    -- return/enter
+    if(event.key == 294 and event.state == 0) then
+        EB:fire("keytyped",{keycode=294})
+    end
     --backspace
     if(event.key == 295 and event.state == 0) then
-        txt = string.sub(txt,1,#txt-1)
+        --txt = string.sub(txt,1,#txt-1)
+        EB:fire("keytyped",{keycode=295})
     end
-    --shift
     if(event.key == 287 or event.key == 288)then
         if(event.state == 1) then 
             shiftDown=true
@@ -100,7 +125,6 @@ scene.window.keyboardCallback = function(event)
             shiftDown = false
         end
     end
-    commandbarText.textstring = txt
 end
 
 
@@ -114,23 +138,18 @@ print("going into the loop")
 local oldMouse = pi.getMouseState()
 
 for count=1,60*10,1 do
-    --clear the screen
     scene:clear()
-
-   --for each node in the list
-   for i,n in ipairs(nodes) do 
-       n:draw(scene)
-       -- move them around randomly
-       --n.x = math.random(100,700)
-       --n.y = math.random(100,500)
-   end
+    -- draw all nodes
+    for i,n in ipairs(nodes) do 
+        n:draw(scene)
+    end
     
-   scene:swap()
+    scene:swap()
    
-   local mouse = pi.getMouseState();
-   if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y) then
+    local mouse = pi.getMouseState();
+    if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y) then
        mouseCallback(mouse)
-   end
+    end
 
-   oldMouse = mouse
+    oldMouse = mouse
 end
