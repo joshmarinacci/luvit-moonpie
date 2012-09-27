@@ -83,6 +83,9 @@ function TextNode.loadShader()
             x=x,
             w=freetype.g.bitmap.width,
             h=freetype.g.bitmap.rows,
+            bx=freetype.g.metrics.horiBearingX/64,
+            by=freetype.g.metrics.horiBearingY/64,
+            advance=freetype.g.metrics.horiAdvance/64,
         }
         x = x + freetype.g.bitmap.width
     end
@@ -161,16 +164,40 @@ function TextNode:draw(scene)
        local fh = metrics[n].h/h
        local size_w = metrics[n].w
        local size_h = metrics[n].h
-       arr[0] = fx; arr[2] = fx; arr[3] = fh; arr[4]=fx+fo; arr[5]=fh; arr[6]=fx+fo; arr[8]=fx;
-       vertexArray[4]=size_h; vertexArray[6]=size_w; vertexArray[7]=size_h; vertexArray[9]=size_w;
-       pi.gles.glUniform2f(TextNode.xySlot, xoff+self.x,self.y)
+       local fy = 0
+       
+       
+       arr[0] = fx;    arr[1] = fy;
+       arr[2] = fx;    arr[3] = fh; 
+       arr[4] = fx+fo; arr[5] = fh; 
+       arr[6] = fx+fo; arr[7] = fy;
+       arr[8] = fx;    arr[9] = fy;
+       
+       
+       local yoff = freetype.h-metrics[n].by;
+       vertexArray[0]=0;
+       vertexArray[1]=0;
+       
+       vertexArray[3]=0;
+       vertexArray[4]=size_h; 
+       
+       vertexArray[6]=size_w;       
+       vertexArray[7]=size_h; 
+
+       vertexArray[9]=size_w;
+       vertexArray[10]=0;
+       
+       vertexArray[12]=0;
+       vertexArray[13]=0;
+       
+       pi.gles.glUniform2f(TextNode.xySlot, xoff+self.x,self.y+yoff)
        pi.gles.glUniformMatrix4fv(TextNode.projectionSlot,  1, pi.GL_FALSE, scene.projection )
        pi.gles.glUniform3f(TextNode.colorSlot, self.color[1], self.color[2], self.color[3])
        pi.gles.glVertexAttribPointer(TextNode.positionSlot, 3, pi.GL_FLOAT, pi.GL_FALSE, 0, vertexArray )
        pi.gles.glVertexAttribPointer(TextNode.coordSlot,    2, pi.GL_FLOAT, pi.GL_FALSE, 0, arr )
        pi.gles.glUniform1i(TextNode.texSlot, 0)
        pi.gles.glDrawArrays( pi.GL_TRIANGLE_STRIP, 0, 5 )
-       xoff = xoff + metrics[n].w
+       xoff = xoff + metrics[n].advance
    end
 end
 

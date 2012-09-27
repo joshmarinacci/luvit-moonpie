@@ -34,9 +34,9 @@ local nodes = {}
 
 
 
-local leftbar  = RectNode:new{x=0,   y=0, width=200, height=600, color=lightGray}
-local center   = RectNode:new{x=200, y=0, width=600, height=600, color=darkGray}
-local rightbar = RectNode:new{x=800, y=0, width=200, height=600, color=lightGray}
+local leftbar  = RectNode:new{x=0,   y=0, width=250, height=600, color=lightGray}
+local center   = RectNode:new{x=250, y=0, width=500, height=600, color=darkGray}
+local rightbar = RectNode:new{x=750, y=0, width=250, height=600, color=lightGray}
 table.insert(nodes, leftbar)
 table.insert(nodes, rightbar)
 table.insert(nodes, center)
@@ -44,10 +44,10 @@ table.insert(nodes, center)
 --table.insert(nodes, RectNode:new{x=0,y=95,width=220,height=40,color={1,0,0}})
 --table.insert(nodes, TextNode:new{x=5,y=100})
 
-local clock = TextNode:new{x=5,y=30,textstring="12:20"}
+local clock = TextNode:new{x=5,y=10,textstring="12:20"}
 table.insert(nodes,clock)
 
-local weather = TextNode:new{x=5,y=60, textstring="EUG: 70o, cloudy"}
+local weather = TextNode:new{x=5,y=40, textstring="EUG: 70o, cloudy"}
 table.insert(nodes,weather)
 
 
@@ -57,27 +57,48 @@ table.insert(nodes, RectNode:new{x=30, y=400, width=8, height=40, color=red})
 
 
 
-local commandbarBG = RectNode:new{x=210, y=530, width=600-20, height=40, color=white}
-local commandbarText = TextNode:new{x=220, y=540, textstring="list programs"}
+local commandbarBG   = RectNode:new{x=260, y=550, width=500-20, height=40, color=white}
+local commandbarText = TextNode:new{x=270, y=550, textstring="list programs"}
 table.insert(nodes,commandbarBG)
 table.insert(nodes,commandbarText)
 
 mouseCallback = function(event)
-    print("I am the mouse ", event.x, " ", event.y)
+    --print("I am the mouse ", event.x, " ", event.y)
 end
 
+local shiftDown = false
+
 scene.window.keyboardCallback = function(event) 
-    print("I am the keyboard ", event.key, event.state)
+    --print("I am the keyboard ", event.key, event.state)
     local txt = commandbarText.textstring
-    --letters
+    --printable chars
     if(event.key >= 32 and event.key<=100) then
         if(event.state == 0) then
-            txt = txt .. string.char(event.key)
+            
+            --A-Z
+            if(event.key >= 65 and event.key <= 90) then
+                --handle caps vs lowercase
+                if(shiftDown) then
+                    txt = txt .. string.char(event.key+0)
+                else
+                    txt = txt .. string.char(event.key+(97-65))
+                end
+            else
+                txt = txt .. string.char(event.key)
+            end
         end
     end
-    --backspaces
+    --backspace
     if(event.key == 295 and event.state == 0) then
         txt = string.sub(txt,1,#txt-1)
+    end
+    --shift
+    if(event.key == 287 or event.key == 288)then
+        if(event.state == 1) then 
+            shiftDown=true
+        else
+            shiftDown = false
+        end
     end
     commandbarText.textstring = txt
 end
