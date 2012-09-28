@@ -100,10 +100,13 @@ local function floatsToArrayBuffer(points, pointCount, elementSize)
     checkError()
     --tell opengl to copy our arry into the buffer
     --size = glfloat is 4 bytes, x 2 of them, x number of points
-    pi.gles.glBufferData(pi.GL_ARRAY_BUFFER,
+    pi.gles.glBufferData(
+        pi.GL_ARRAY_BUFFER,
         pointCount*elementSize*floatSize,
-        points, pi.GL_STATIC_DRAW)
+        points,
+        pi.GL_STATIC_DRAW)
     checkError()
+    pi.gles.glBindBuffer(pi.GL_ARRAY_BUFFER, 0) --turn off the buffer
     return vbo
 end
 
@@ -126,8 +129,8 @@ local function uploadTexture(image)
     print("texture id = ", texId)
     pi.gles.glActiveTexture(pi.GL_TEXTURE0)
     pi.gles.glBindTexture(pi.GL_TEXTURE_2D, texId)
-    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_NEAREST)
-    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_NEAREST)
+    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_LINEAR)
+    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_LINEAR)
     pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_WRAP_S, pi.GL_REPEAT);
     pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_WRAP_T, pi.GL_REPEAT);
     checkError()

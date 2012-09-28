@@ -2,7 +2,6 @@
 
 a simple scenegraph.  loops over list of objects to display
 three object types:  text, rect filled with color, and image
-
 --]]
 
 local ffi = require("ffi");
@@ -29,8 +28,11 @@ require ("RectNode")
 RectNode.loadShader()
 require ("TextNode")
 TextNode.loadShader()
+require ("ImageNode")
+ImageNode.loadShader()
+require ("ParticleSplashNode")
 
-
+local nodes = {}
 --- set up some colors
 local white = {1,1,1}
 local black = {0,0,0}
@@ -39,7 +41,6 @@ local darkGray = {0.4,0.4,0.4}
 local red = {1.0,0,0}
 
 -- set up a scene
-local nodes = {}
 
 
 
@@ -49,9 +50,6 @@ local rightbar = RectNode:new{x=750, y=0, width=250, height=600, color=lightGray
 table.insert(nodes, leftbar)
 table.insert(nodes, rightbar)
 table.insert(nodes, center)
-
---table.insert(nodes, RectNode:new{x=0,y=95,width=220,height=40,color={1,0,0}})
---table.insert(nodes, TextNode:new{x=5,y=100})
 
 local clock = TextNode:new{x=5,y=10,textstring="12:20"}
 table.insert(nodes,clock)
@@ -68,6 +66,12 @@ table.insert(nodes, RectNode:new{x=30, y=400, width=8, height=40, color=red})
 local animRect = RectNode:new{x=0,y=0,width=20,height=20, color={1,1,0}}
 table.insert(nodes, animRect)
 
+local imageNode = ImageNode:new{x=770,y=100,width=200,height=200}
+table.insert(nodes, imageNode)
+
+local partNode = ParticleSplashNode:new{}
+table.insert(nodes, partNode)
+
 --[[
 anim. create anim obj, processed by the rect shader. 
     always has start pos, end pos, and time. if time <= 0 then just start pos.
@@ -79,7 +83,6 @@ anim.start()
      ensures faster speed.
      onstart and onend functions can be called when the 
      transition itself starts (after the delay), and when it ends
-
 --]]
 
 local onstart = function()
@@ -90,7 +93,6 @@ local onend = function()
 end
 
 require("TranslateAnim")
-
 local anim = TranslateAnim:new{
     target=animRect,
     startX=0,endX=400,
@@ -99,8 +101,8 @@ local anim = TranslateAnim:new{
 --    delay=1000,
 --    onStart=onstart,
 --    onEnd=onend,
---    loop=true,
---    reverse=true,
+    loop=true,
+    reverse=true,
     }
 
 anim:start()
@@ -175,9 +177,9 @@ print("going into the loop")
 local oldMouse = pi.getMouseState()
 
 
-for count=1,60*10,1 do
+while true do
     -- update the animations
-    anim:update(pi.glfw.glfwGetTime())
+    anim:update(pi.getTime())
 
     -- clear the screen
     scene:clear()
@@ -185,7 +187,7 @@ for count=1,60*10,1 do
     for i,n in ipairs(nodes) do 
         n:draw(scene)
     end
-    
+
     scene:swap()
    
     local mouse = pi.getMouseState();

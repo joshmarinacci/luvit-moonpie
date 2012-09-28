@@ -33,8 +33,8 @@ function TextNode.loadShader()
     --pi.gles.glActiveTexture(pi.GL_TEXTURE0)
     pi.gles.glGenTextures(1,R_texId)
     checkError()
-    local texId = R_texId[0]
-    pi.gles.glBindTexture(pi.GL_TEXTURE_2D, texId)
+    TextNode.texId = R_texId[0]
+    pi.gles.glBindTexture(pi.GL_TEXTURE_2D, TextNode.texId)
     checkError()
     --pi.gles.glUniform1i(uniform_tex, 0)
     --pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_NEAREST)
@@ -150,6 +150,7 @@ end
 
 function TextNode:draw(scene)
    pi.gles.glUseProgram( TextNode.shader )
+   pi.gles.glBindTexture(pi.GL_TEXTURE_2D, TextNode.texId)
 --    print("drawing a text node in gl")
    local xoff = 0
    local arr = self.coordArray

@@ -51,7 +51,7 @@ Scene.loadOrthoMatrix = loadOrthoMatrix
 
 function Scene:clear()
    pi.gles.glViewport(0,0,self.window.width, self.window.height)
-   pi.gles.glClearColor(1,1,1,1)
+   pi.gles.glClearColor(0,0,0,1)
    pi.gles.glClear( pi.GL_COLOR_BUFFER_BIT )
 end
 

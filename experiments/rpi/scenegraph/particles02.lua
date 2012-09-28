@@ -25,7 +25,7 @@ local gl = pi.gles
 window = pi.createFullscreenWindow()
 
 --generate the particle points
-local pointCount = 100
+local pointCount = 1000
 local elementCount = 3
 points = ffi.new("GLfloat["..(pointCount*elementCount).."]")
 for i=0,pointCount,1 do
@@ -93,7 +93,8 @@ util.enablePointSprites()
 
 --turn on blending for the texture
 gl.glEnable(pi.GL_BLEND)
-gl.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE_MINUS_SRC_ALPHA)
+--gl.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE_MINUS_SRC_ALPHA)
+gl.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE)
 
 --load the sprite image, then turn it into a texture
 local image = img.loadImage("sprite.png")
