@@ -36,6 +36,7 @@ void   glLinkProgram (GLuint program);
 void   glUseProgram (GLuint program);
 int    glGetAttribLocation (GLuint program, const GLchar* name);
 void   glEnableVertexAttribArray (GLuint index);
+void   glDisableVertexAttribArray (GLuint index);
 void   glGetProgramInfoLog (GLuint program, GLsizei bufsize, GLsizei* length, GLchar* infolog);
 
 void   glGenBuffers  (GLsizei n, GLuint* buffers );
@@ -76,6 +77,7 @@ void   glBlendFunc (GLenum sfactor, GLenum dfactor);
 void   glPixelStorei (GLenum pname, GLint param);
 
 GLenum glGetError (void);
+void   glGetFloatv (GLenum pname, GLfloat* params);
 
 ]]
 

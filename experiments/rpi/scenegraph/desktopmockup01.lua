@@ -65,10 +65,47 @@ table.insert(nodes, RectNode:new{x=20, y=420, width=8, height=20, color=red})
 table.insert(nodes, RectNode:new{x=30, y=400, width=8, height=40, color=red})
 
 
+local animRect = RectNode:new{x=0,y=0,width=20,height=20, color={1,1,0}}
+table.insert(nodes, animRect)
+
+--[[
+anim. create anim obj, processed by the rect shader. 
+    always has start pos, end pos, and time. if time <= 0 then just start pos.
+anim = TranslateAnim:new{target=rect1, startx=300,endx=500,
+    starty=100,endy=100,duration=1000,delay=500,onStart=func,onEnd=func})
+anim.start()
+     changes the translate (x,y) of the shader, modulated by T and an easing.
+     doesn't update the rectnode's x,y until the transition is complete. 
+     ensures faster speed.
+     onstart and onend functions can be called when the 
+     transition itself starts (after the delay), and when it ends
+
+--]]
+
+local onstart = function()
+    print("anim is starting")
+end
+local onend = function()
+    print("anim is ending")
+end
+
+require("TranslateAnim")
+
+local anim = TranslateAnim:new{
+    target=animRect,
+    startX=0,endX=400,
+    startY=0,endY=400,
+    duration=500,
+--    delay=1000,
+--    onStart=onstart,
+--    onEnd=onend,
+--    loop=true,
+--    reverse=true,
+    }
+
+anim:start()
 
 require("TextField")
-
-
 local tf = TextField:new()
 table.insert(nodes,tf)
 
@@ -137,7 +174,12 @@ end
 print("going into the loop")
 local oldMouse = pi.getMouseState()
 
+
 for count=1,60*10,1 do
+    -- update the animations
+    anim:update(pi.glfw.glfwGetTime())
+
+    -- clear the screen
     scene:clear()
     -- draw all nodes
     for i,n in ipairs(nodes) do 

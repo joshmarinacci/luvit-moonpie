@@ -104,7 +104,14 @@ pi.GL_SHADER_COMPILER      = 0x8DFA
 pi.GL_COLOR_BUFFER_BIT     = 0x00004000
 pi.GL_FLOAT                = 0x1406
 pi.GL_FALSE                = 0
-pi.GL_TRIANGLE_STRIP       =          0x0005
+pi.GL_TRIANGLE_STRIP       = 0x0005
+pi.GL_POINTS               = 0x0000
+pi.GL_LINES                = 0x0001
+pi.GL_LINE_LOOP            = 0x0002
+pi.GL_LINE_STRIP           = 0x0003
+pi.GL_TRIANGLES            = 0x0004
+pi.GL_TRIANGLE_STRIP       = 0x0005
+pi.GL_TRIANGLE_FAN         = 0x0006
 
 pi.GL_NO_ERROR          = 0
 pi.GL_INVALID_ENUM      = 0x0500
@@ -145,10 +152,24 @@ pi.GL_RGBA                     =      0x1908
 pi.GL_UNSIGNED_BYTE        = 0x1401
 
 
+pi.GL_ZERO                     =      0
+pi.GL_ONE                      =      1
 pi.GL_SRC_ALPHA                =      0x0302
 pi.GL_ONE_MINUS_SRC_ALPHA      =      0x0303
 pi.GL_UNPACK_ALIGNMENT         =      0x0CF5
 pi.GL_ARRAY_BUFFER             =      0x8892
+
+
+pi.GL_STREAM_DRAW              =      0x88E0
+pi.GL_STATIC_DRAW              =      0x88E4
+pi.GL_DYNAMIC_DRAW             =      0x88E8
+
+pi.GL_ALIASED_POINT_SIZE_RANGE =      0x846D
+
+
+--only needed on mac / non-pure es2.0 systems
+pi.GL_POINT_SPRITE             =      0x8861
+pi.GL_VERTEX_PROGRAM_POINT_SIZE =     0x8642
 
 local function validate_shader(shader) 
 
