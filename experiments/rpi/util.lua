@@ -90,8 +90,68 @@ function sleep(n)
   os.execute("sleep " .. tonumber(n))
 end
 
+
+local function floatsToArrayBuffer(points, pointCount, elementSize) 
+    local floatSize = 4 --size of a GLfloat in bytes
+    local R_vbo = ffi.new("GLuint[1]")
+    pi.gles.glGenBuffers(1,R_vbo)
+    local vbo = R_vbo[0]
+    pi.gles.glBindBuffer(pi.GL_ARRAY_BUFFER, vbo)
+    checkError()
+    --tell opengl to copy our arry into the buffer
+    --size = glfloat is 4 bytes, x 2 of them, x number of points
+    pi.gles.glBufferData(pi.GL_ARRAY_BUFFER,
+        pointCount*elementSize*floatSize,
+        points, pi.GL_STATIC_DRAW)
+    checkError()
+    return vbo
+end
+
+
+local function uploadTexture(image) 
+    local ct = "GLubyte["..(image.width*image.height*4).."]";
+    print("count = " , ct);
+    local buf = ffi.new(ct);
+    for j=0, image.width*image.height, 1 do
+        buf[j*4+0] = image.pixels[j*4+2]
+        buf[j*4+1] = image.pixels[j*4+1]
+        buf[j*4+2] = image.pixels[j*4+0]
+        buf[j*4+3] = image.pixels[j*4+3]
+    end
+    
+    local R_texId = ffi.new("GLuint[1]");
+    pi.gles.glGenTextures(1,R_texId);
+    local texId = R_texId[0]
+    
+    print("texture id = ", texId)
+    pi.gles.glActiveTexture(pi.GL_TEXTURE0)
+    pi.gles.glBindTexture(pi.GL_TEXTURE_2D, texId)
+    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_NEAREST)
+    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_NEAREST)
+    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_WRAP_S, pi.GL_REPEAT);
+    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_WRAP_T, pi.GL_REPEAT);
+    checkError()
+    pi.gles.glTexImage2D(pi.GL_TEXTURE_2D, 
+        0, 
+        pi.GL_RGBA, 
+        image.width,
+        image.height,
+        0, pi.GL_RGBA, pi.GL_UNSIGNED_BYTE, 
+        buf);
+    checkError()
+    return texId
+end
+
 return {
     loadOrthoMatrix = loadOrthoMatrix,
     buildShaderProgram = buildShaderProgram,
     sleep = sleep,
+    floatsToArrayBuffer= floatsToArrayBuffer,
+    uploadImageAsTexture = uploadTexture,
+    
+    enablePointSprites = function()
+        pi.gles.glEnable(pi.GL_POINT_SPRITE)  -- why do I need this?
+        pi.gles.glEnable(pi.GL_VERTEX_PROGRAM_POINT_SIZE) -- why do I need this?
+    end
+
 }

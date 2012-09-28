@@ -273,6 +273,11 @@ pi.createFullscreenWindow = createFullscreenWindow
 pi.getMouseState = getMouseState
 pi.loadShader = load_shader
 
+
+pi.getTime = function()
+    return glfw.glfwGetTime()
+end
+
 return pi;
 
 
