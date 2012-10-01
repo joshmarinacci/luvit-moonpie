@@ -97,7 +97,7 @@ local anim = TranslateAnim:new{
     target=animRect,
     startX=0,endX=400,
     startY=0,endY=400,
-    duration=500,
+    duration=800,
 --    delay=1000,
 --    onStart=onstart,
 --    onEnd=onend,
@@ -117,6 +117,13 @@ EB:on("action",function(e)
     end
 end)
 
+
+EB:onTimer(1, function()
+    print("timer happened")
+    local time = os.date("*t",os.time())
+    print("os.time = ", time.hour, " ",time.min, " ",time.sec)
+    clock.textstring = time.hour..":"..time.min..":"..time.sec
+end)
 
 
 mouseCallback = function(event)
@@ -178,6 +185,7 @@ local oldMouse = pi.getMouseState()
 
 
 while true do
+    EB:tick(pi.getTime())
     -- update the animations
     anim:update(pi.getTime())
 
