@@ -4,6 +4,7 @@ a simple scenegraph.  loops over list of objects to display
 three object types:  text, rect filled with color, and image
 --]]
 
+jit.off()
 package.path = package.path .. ";../?.lua"
 
 local pi = require("moonpie")
