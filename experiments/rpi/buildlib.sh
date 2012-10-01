@@ -12,7 +12,7 @@ gcc -shared $LDFLAGS -o libjoshpi.so joshpi.o
 echo "compiling and linking a test app"
 gcc -L./ -Wall $INCLUDES -o joshpitest joshpitest.c -ljoshpi
 
-LD_LIBRARY_PATH=/home/josh/luvit-moonpie/experiments/rpi:$LD_LIBRARY_PATH
-echo "running the test app"
-echo ""
-./joshpitest
+#LD_LIBRARY_PATH=/home/josh/luvit-moonpie/experiments/rpi:$LD_LIBRARY_PATH
+#echo "running the test app"
+#echo ""
+#./joshpitest

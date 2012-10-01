@@ -78,6 +78,7 @@ void   glPixelStorei (GLenum pname, GLint param);
 
 GLenum glGetError (void);
 void   glGetFloatv (GLenum pname, GLfloat* params);
+const GLubyte* glGetString (GLenum name);
 
 ]]
 
@@ -107,6 +108,7 @@ return {
     --shader stuff
     GL_VERTEX_SHADER            = 0x8B31,
     GL_FRAGMENT_SHADER          = 0x8B30,
+    GL_SHADING_LANGUAGE_VERSION = 0x8B8C,
     
     GL_COMPILE_STATUS           = 0x8B81,
     GL_INFO_LOG_LENGTH          = 0x8B84,
@@ -122,6 +124,13 @@ return {
     GL_TEXTURE_2D               =      0x0DE1,
     GL_TEXTURE0                 =      0x84C0,
     GL_COLOR_BUFFER_BIT         =  0x00004000,
+    
+    -- string names
+    GL_VENDOR                   =      0x1F00,
+    GL_RENDERER                 =      0x1F01,
+    GL_VERSION                  =      0x1F02,
+    GL_EXTENSIONS               =      0x1F03,
+
     
     --geometry
     GL_POINTS                   =      0x0000,

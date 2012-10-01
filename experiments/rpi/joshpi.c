@@ -11,6 +11,8 @@
 #include "EGL/egl.h"
 
 
+#include <termios.h>
+#include <linux/input.h>
 #include "joshpi.h"
 
 
@@ -204,5 +206,44 @@ _exit:
    if (outx) *outx = x;
    if (outy) *outy = y;
    return 0;
-}       
+}
+
+int get_keyboard(int *key, int *state)
+{
+    static int fd = -1;
+    char *device = "/dev/input/by-path/platform-bcm2708_usb-usb-0:1.3:1.0-event-kbd";
+    char name[256] = "Unknown";
+    //open the device
+    if(fd < 0) {
+        if ((fd = open(device, O_RDONLY|O_NONBLOCK)) == -1) {
+            printf("%s is not\n",device);
+        }
+        ioctl (fd, EVIOCGNAME (sizeof (name)), name);
+        printf("Reading From : %s (%s)\n", device, name);
+    }
+    
+    
+    int rd = -1;
+    struct input_event ev[64];
+    int size = sizeof(struct input_event);
+    int value = 1;
+    static int code = 0;
+    
+    if ((rd = read (fd, ev, size * 64)) < size) {
+        //printf("error reading\n");
+        return -1;
+    }
+    value = ev[0].value;
+    printf("read value %d\n",value);
+    
+    if (value != ' ' && ev[1].value == 1 && ev[1].type == 1){ // Only read the key press event
+        printf ("Code[%d] type = %d, value = %d\n", (ev[1].code), ev[1].type,ev[1].value);
+        code = ev[1].code;
+    }
+    
+    if(key) *key = code;
+    if(state) *state = 0;
+    
+    return 0;
+}
 
