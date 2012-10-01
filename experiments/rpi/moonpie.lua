@@ -202,6 +202,34 @@ local function getMouseState()
 end
 
 
+if(MAC) then
+    pi.getTime = function()
+        return glfw.glfwGetTime()
+    end
+end
+
+if(LINUX) then
+    ffi.cdef[[
+        struct timeval {
+           uint32_t sec;
+           uint32_t usec;
+        };
+    
+        int gettimeofday(struct timeval *restrict tp, void *restrict tzp);
+    ]]
+        
+    local tp = ffi.new("struct timeval")
+    ffi.C.gettimeofday(tp, nil)
+    local starttime = tp.sec+(tp.usec/1000000)
+    pi.getTime = function()
+        ffi.C.gettimeofday(tp, nil)
+        local usec = tp.usec/1000000;
+        --print("***", tp.sec, tp.usec, " ",usec)
+        return tp.sec+usec - starttime
+    end
+end
+
+
 pi.gles = gles
 pi.createFullscreenWindow = createFullscreenWindow
 pi.getMouseState = getMouseState

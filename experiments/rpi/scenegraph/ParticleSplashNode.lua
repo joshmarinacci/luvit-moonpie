@@ -96,7 +96,7 @@ function ParticleSplashNode:draw()
     
     --set our uniforms
     pi.gles.glUniform1i(self.tex_slot, 0)
-    pi.gles.glUniform1f(self.time_slot, 0)--pi.getTime())
+    pi.gles.glUniform1f(self.time_slot, pi.getTime())
     
     pi.gles.glBindBuffer(pi.GL_ARRAY_BUFFER, self.vbo) --turn on the buffer
     pi.gles.glEnableVertexAttribArray(self.part_slot) --enable the attribute
