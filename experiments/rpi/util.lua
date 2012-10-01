@@ -1,29 +1,44 @@
 local ffi = require("ffi");
 
+
+function printStack()
+    print("2 = ",debug.getinfo(2).currentline, " ", debug.getinfo(2).source, " ", debug.getinfo(2).short_src)
+    print("3 = ",debug.getinfo(3).currentline, " ", debug.getinfo(3).source, " ", debug.getinfo(3).short_src)
+    print("4 = ",debug.getinfo(4).currentline, " ", debug.getinfo(4).source, " ", debug.getinfo(4).short_src)
+    print("4 = ",debug.getinfo(5).currentline, " ", debug.getinfo(5).source, " ", debug.getinfo(5).short_src)
+end
+
 function checkError()
     local err = pi.gles.glGetError();
     if(err == pi.GL_NO_ERROR) then
         --print("no error")
     end
     if(err == pi.GL_INVALID_ENUM) then
-        print("Error: invalid enum before line", debug.getinfo(2).currentline)
+        print("Error: invalid enum before line",  debug.getinfo(2).currentline, " ", debug.getinfo(2).source, " ", debug.getinfo(2).short_src)
+        printStack()
     end
     if(err == pi.GL_INVALID_VALUE) then
-        print("Error: invalid value before line", debug.getinfo(2).currentline)
+        print("Error: invalid value before line",  debug.getinfo(2).currentline, " ", debug.getinfo(2).source, " ", debug.getinfo(2).short_src)
+        printStack()
     end
     if(err == pi.GL_INVALID_OPERATION) then
-        print("Error: invalid operation before line", debug.getinfo(2).currentline)
+        print("Error: invalid operation before line", debug.getinfo(2).currentline, " ", debug.getinfo(2).source, " ", debug.getinfo(2).short_src)
+        printStack()
     end
     if(err == pi.GL_OUT_OF_MEMORY) then
-        print("Error: out of memory", debug.getinfo(2).currentline)
+        print("Error: out of memory",  debug.getinfo(2).currentline, " ", debug.getinfo(2).source, " ", debug.getinfo(2).short_src)
+        printStack()
     end
 end
+
+
 
 
 function showProgramLog(prog)
    local log = ffi.new("char[1024]")
    pi.gles.glGetProgramInfoLog(prog,1024,NULL,log);
-   print("got a log: ",ffi.string(log))
+   checkError();
+   print("shader compiler log: ",ffi.string(log))
 end
 
 function buildShaderProgram(vshader_source, fshader_source)
