@@ -52,7 +52,7 @@ for i=0,200,1 do
 end
 ]]
 
-nodes[1] = RectNode:new{x=0,y=95,width=220,height=40,color={1,0,0}}
+nodes[1] = RectNode:new{x=0,y=0,width=220,height=40,color={1,1,0}}
 nodes[2] = TextNode:new{x=5,y=100}
 
 -- do initial setup
