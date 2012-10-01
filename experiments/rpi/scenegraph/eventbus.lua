@@ -33,9 +33,10 @@ end
 
 function EventBus:tick(time)
     for i,v in pairs(self.timers) do
-        if(v.lastTime == nill) then
+        if(v.lastTime == nil) then
             v.lastTime = time
         end
+        jit.off()
         --print("v.lasttime = ", v.lastTime)
         if(time - v.lastTime > v.period) then
             v.lastTime = time

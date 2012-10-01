@@ -56,11 +56,12 @@ table.insert(nodes,clock)
 local weather = TextNode:new{x=5,y=40, textstring="EUG: 70o, cloudy"}
 table.insert(nodes,weather)
 
-
-table.insert(nodes, RectNode:new{x=10, y=410, width=8, height=30, color=red})
-table.insert(nodes, RectNode:new{x=20, y=420, width=8, height=20, color=red})
-table.insert(nodes, RectNode:new{x=30, y=400, width=8, height=40, color=red})
-
+local bars = {}
+for i=1, 10, 1 do
+    bars[i] = RectNode:new{x=i*10, y=440, width=8, height=10, color=red}
+    table.insert(nodes,bars[i])
+end
+    
 
 local animRect = RectNode:new{x=0,y=0,width=20,height=20, color={1,1,0}}
 table.insert(nodes, animRect)
@@ -71,24 +72,11 @@ table.insert(nodes, imageNode)
 local partNode = ParticleSplashNode:new{}
 table.insert(nodes, partNode)
 
---[[
-anim. create anim obj, processed by the rect shader. 
-    always has start pos, end pos, and time. if time <= 0 then just start pos.
-anim = TranslateAnim:new{target=rect1, startx=300,endx=500,
-    starty=100,endy=100,duration=1000,delay=500,onStart=func,onEnd=func})
-anim.start()
-     changes the translate (x,y) of the shader, modulated by T and an easing.
-     doesn't update the rectnode's x,y until the transition is complete. 
-     ensures faster speed.
-     onstart and onend functions can be called when the 
-     transition itself starts (after the delay), and when it ends
---]]
-
 local onstart = function()
-    print("anim is starting")
+--    print("anim is starting")
 end
 local onend = function()
-    print("anim is ending")
+--    print("anim is ending")
 end
 
 require("TranslateAnim")
@@ -98,8 +86,8 @@ local anim = TranslateAnim:new{
     startY=0,endY=400,
     duration=800,
 --    delay=1000,
---    onStart=onstart,
---    onEnd=onend,
+    onStart=onstart,
+    onEnd=onend,
     loop=true,
     reverse=true,
     }
@@ -124,6 +112,28 @@ EB:onTimer(1, function()
     clock.textstring = time.hour..":"..time.min..":"..time.sec
 end)
 
+EB:onTimer(6, function()
+    --print("timer happened")
+    --local time = os.date("*t",os.time())
+    --print("os.time = ", time.hour, " ",time.min, " ",time.sec)
+    local w = {
+        "cloudy",
+        "sunny",
+        "rainy",
+        "snowy"
+    }
+    weather.textstring = "EUG ".. (math.random(40,90)).."o "..w[math.random(1,4)]
+end)
+
+EB:onTimer(0.1, function()
+    for i=1,#bars,1 do
+        local v = math.random(10,50)
+        bars[i].y = 440-v
+        bars[i].height = v
+        bars[i]:update()
+    end
+    
+end)
 
 mouseCallback = function(event)
     --print("I am the mouse ", event.x, " ", event.y)
