@@ -24,7 +24,7 @@ function ParticleSplashNode:init()
     self.vbo = util.floatsToArrayBuffer(self.points,self.pointCount,self.elementCount)
 
 local vshader = [[
-#version 100
+#version 120
 attribute vec3  part;    //the particle: x,y,t
 varying   vec4  f_color;
 uniform   float time;
@@ -52,7 +52,7 @@ void main(void) {
 
 -- color the particle using the texture * passed in color
 local fshader = [[
-#version 100
+#version 120
 uniform sampler2D tex;
 varying vec4 f_color;
 uniform float sprite;

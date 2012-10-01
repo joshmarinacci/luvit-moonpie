@@ -250,11 +250,11 @@ end
 
 local face = R_face[0]
 print("the face = ",face)
---[[
 -- set to 48 pt
 freetype.FT_Set_Pixel_Sizes(face,0,30)
 print("set the size to 14 pixels")
 
+--[[
 print("num faces = ",face.num_faces)
 print("num glyphs = ",face.num_glyphs)
 print("family name = ",face.family_name)
