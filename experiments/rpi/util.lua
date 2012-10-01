@@ -6,20 +6,16 @@ function checkError()
         --print("no error")
     end
     if(err == pi.GL_INVALID_ENUM) then
-        print("Error: invalid enum")
-        print("doing debug: ", debug.getinfo(2).currentline)
+        print("Error: invalid enum before line", debug.getinfo(2).currentline)
     end
     if(err == pi.GL_INVALID_VALUE) then
-        print("Error: invalid value")
-        print("doing debug: ", debug.getinfo(2).currentline)
+        print("Error: invalid value before line", debug.getinfo(2).currentline)
     end
     if(err == pi.GL_INVALID_OPERATION) then
-        print("Error: invalid operation")
-        print("doing debug: ", debug.getinfo(2).currentline)
+        print("Error: invalid operation before line", debug.getinfo(2).currentline)
     end
     if(err == pi.GL_OUT_OF_MEMORY) then
-        print("Error: out of memory")
-        print("doing debug: ", debug.getinfo(2).currentline)
+        print("Error: out of memory", debug.getinfo(2).currentline)
     end
 end
 
@@ -92,6 +88,7 @@ end
 
 
 local function floatsToArrayBuffer(points, pointCount, elementSize) 
+print("inside floats to array buffer")
     local floatSize = 4 --size of a GLfloat in bytes
     local R_vbo = ffi.new("GLuint[1]")
     pi.gles.glGenBuffers(1,R_vbo)
@@ -153,8 +150,8 @@ return {
     uploadImageAsTexture = uploadTexture,
     
     enablePointSprites = function()
-        pi.gles.glEnable(pi.GL_POINT_SPRITE)  -- why do I need this?
-        pi.gles.glEnable(pi.GL_VERTEX_PROGRAM_POINT_SIZE) -- why do I need this?
+        --pi.gles.glEnable(pi.GL_POINT_SPRITE)  -- why do I need this?
+        --pi.gles.glEnable(pi.GL_VERTEX_PROGRAM_POINT_SIZE) -- why do I need this?
     end
 
 }
