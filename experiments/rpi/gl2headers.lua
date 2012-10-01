@@ -161,6 +161,9 @@ return {
     GL_INVALID_ENUM      = 0x0500,
     GL_INVALID_VALUE     = 0x0501,
     GL_INVALID_OPERATION = 0x0502,
-    GL_OUT_OF_MEMORY     = 0x0505
+    GL_OUT_OF_MEMORY     = 0x0505,
     
+    -- only needed for mac to enable point sprites
+    GL_POINT_SPRITE             =      0x8861,
+    GL_VERTEX_PROGRAM_POINT_SIZE =     0x8642,
 }
