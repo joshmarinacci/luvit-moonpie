@@ -103,6 +103,7 @@ return {
     GL_ALPHA                    = 0x1906,
     GL_RGB                      = 0x1907,
     GL_RGBA                     = 0x1908,
+    GL_BYTE                     = 0x1400,
     GL_UNSIGNED_BYTE            = 0x1401,
     
     --shader stuff

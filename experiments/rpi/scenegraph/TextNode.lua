@@ -24,7 +24,7 @@ function TextNode.loadShader()
     checkError()
     
     local R_texId = ffi.new("GLuint[1]")
-    pi.gles.glActiveTexture(pi.GL_TEXTURE0)
+    --pi.gles.glActiveTexture(pi.GL_TEXTURE0)
     pi.gles.glGenTextures(1,R_texId)
     checkError()
     TextNode.texId = R_texId[0]
@@ -38,18 +38,21 @@ function TextNode.loadShader()
     pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_LINEAR)
     pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_LINEAR)
     
+    print("w & h = ",freetype.w, freetype.h)
     pi.gles.glPixelStorei(pi.GL_UNPACK_ALIGNMENT, 1)
+    checkError()
     -- create an empty texture of the right size
     pi.gles.glTexImage2D(
         pi.GL_TEXTURE_2D, 
         0, 
-        pi.GL_RGBA, 
-        freetype.w,
-        freetype.h,
-        0, 
-        pi.GL_ALPHA,
-        pi.GL_UNSIGNED_BYTE,
+        pi.GL_ALPHA,  -- internal format
+        freetype.w,   -- width of texture
+        freetype.h,   -- height of texture
+        0,            -- border?
+        pi.GL_ALPHA,  -- kind of pixel data
+        pi.GL_UNSIGNED_BYTE,  -- format of pixel data
         nil);
+    checkError()
     
     -- copy the glyphs into the texture
     
@@ -73,6 +76,7 @@ function TextNode.loadShader()
             pi.GL_UNSIGNED_BYTE,
             freetype.g.bitmap.buffer
         )
+    checkError()
         metrics[i] = {
             x=x,
             w=freetype.g.bitmap.width,
@@ -87,6 +91,7 @@ function TextNode.loadShader()
     TextNode.metrics = metrics
     print("finished loading the glyphs")
     
+    checkError()
     --now we can set up the shaders
     local vshader_source = [[
     attribute vec4 Position;
@@ -125,6 +130,7 @@ function TextNode.loadShader()
     }
     ]]
     print("compiling the shaders")
+    checkError()
     TextNode.shader = util.buildShaderProgram(vshader_source, fshader_source)
     print("the shader id = ",TextNode.shader)
     TextNode.projectionSlot = pi.gles.glGetUniformLocation(TextNode.shader,"projection");
