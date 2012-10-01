@@ -14,7 +14,7 @@ local freetype = require("freetype")
 TextNode = {}
 TextNode.x = 100
 TextNode.y = 200
-TextNode.color = {0.0,0.0,0.0}
+TextNode.color = {1.0,0.5,0.5}
 TextNode.textstring = "PENNY penny"
 
 function TextNode.loadShader() 
@@ -24,7 +24,7 @@ function TextNode.loadShader()
     checkError()
     
     local R_texId = ffi.new("GLuint[1]")
-    pi.gles.glActiveTexture(pi.GL_TEXTURE0)
+    --pi.gles.glActiveTexture(pi.GL_TEXTURE0)
     pi.gles.glGenTextures(1,R_texId)
     checkError()
     TextNode.texId = R_texId[0]
@@ -54,6 +54,7 @@ function TextNode.loadShader()
     -- copy the glyphs into the texture
     
     local metrics = {}
+    checkError();
     
     local x = 0
     for i=32,128,1 do
@@ -73,6 +74,7 @@ function TextNode.loadShader()
             pi.GL_UNSIGNED_BYTE,
             freetype.g.bitmap.buffer
         )
+    checkError();
         metrics[i] = {
             x=x,
             w=freetype.g.bitmap.width,
@@ -84,8 +86,10 @@ function TextNode.loadShader()
         x = x + freetype.g.bitmap.width
     end
     
+    checkError();
     TextNode.metrics = metrics
     print("finished loading the glyphs")
+    checkError();
     
     --now we can set up the shaders
     local vshader_source = [[
@@ -94,7 +98,6 @@ function TextNode.loadShader()
     uniform mat4 projection;
     uniform vec2 xy;
     varying vec2 uv;
-    
     mat4 translate(float x, float y, float z)
     {
         return mat4(
@@ -104,7 +107,6 @@ function TextNode.loadShader()
             vec4(x,   y,   z,   1.0)
         );
     }
-    
     void main()
     {
         gl_Position = translate(xy.x,xy.y,0.0) * Position *  projection ; 
@@ -118,13 +120,12 @@ function TextNode.loadShader()
     uniform vec3 color;
     void main()
     {
-        vec3 color0 = vec3(0.0,0.0,0.0);
-        vec3 color1 = vec3(1.0,1.0,1.0);
         vec4 color2 = texture2D(tex, vec2(uv.x,uv.y));
         gl_FragColor = vec4(color.r,color.g,color.b, color2.a);
     }
     ]]
     print("compiling the shaders")
+    checkError();
     TextNode.shader = util.buildShaderProgram(vshader_source, fshader_source)
     print("the shader id = ",TextNode.shader)
     TextNode.projectionSlot = pi.gles.glGetUniformLocation(TextNode.shader,"projection");
@@ -145,7 +146,6 @@ end
 function TextNode:draw(scene)
    pi.gles.glUseProgram( TextNode.shader )
    pi.gles.glBindTexture(pi.GL_TEXTURE_2D, TextNode.texId)
---    print("drawing a text node in gl")
    local xoff = 0
    local arr = self.coordArray
    local vertexArray = self.vertexArray
