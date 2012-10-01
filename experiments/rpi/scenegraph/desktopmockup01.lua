@@ -4,6 +4,7 @@ a simple scenegraph.  loops over list of objects to display
 three object types:  text, rect filled with color, and image
 --]]
 
+jit.off()
 package.path = package.path .. ";../?.lua"
 
 local pi = require("moonpie")
@@ -219,11 +220,13 @@ while true do
        mouseCallback(mouse)
     end
     
-    local keyboard = pi.getKeyboardState();
-    if(keyboard.key ~= lastkey) then
-        processKey(keyboard)
+    if(pi.LINUX) then
+        local keyboard = pi.getKeyboardState();
+        if(keyboard.key ~= lastkey) then
+            processKey(keyboard)
+        end
+        lastkey = keyboard.key
     end
-    lastkey = keyboard.key
 
     oldMouse = mouse
 end
