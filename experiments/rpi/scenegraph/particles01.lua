@@ -18,7 +18,7 @@ window = pi.createFullscreenWindow()
 
 -- setup the shader
 vshader = [[
-#version 100
+#version 120
 attribute vec2  coord2d;
 varying   vec4  f_color;
 uniform   float offset_x;
@@ -49,6 +49,7 @@ void main(void) {
 --#version 120
 
 fshader = [[
+#version 120
 uniform sampler2D tex;
 varying vec4 f_color;
 uniform float sprite;
@@ -56,8 +57,8 @@ uniform float sprite;
 
 void main(void) {
     vec4 color2 = texture2D(tex, gl_PointCoord);
-    //gl_FragColor = vec4(color2.r, color2.g, color2.b, color2.a) * f_color;
-    gl_FragColor = vec4(0,1,0,1);
+    gl_FragColor = vec4(color2.r, color2.g, color2.b, color2.a) * f_color;
+    //gl_FragColor = vec4(0,1,0,1);
 }
 
 ]]
@@ -108,7 +109,7 @@ for i=0, 60*10, 1 do
     checkError()
     pi.gles.glBindTexture(pi.GL_TEXTURE_2D, texId)
     checkError()
-    --pi.gles.glEnable(pi.GL_TEXTURE_2D);
+    pi.gles.glEnable(pi.GL_TEXTURE_2D);
     checkError()
 
     --clear the screen
