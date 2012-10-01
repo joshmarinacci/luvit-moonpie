@@ -138,6 +138,7 @@ local function uploadTexture(image)
     
     local R_texId = ffi.new("GLuint[1]");
     pi.gles.glGenTextures(1,R_texId);
+    checkError()
     local texId = R_texId[0]
     
     print("texture id = ", texId)
@@ -167,8 +168,10 @@ return {
     uploadImageAsTexture = uploadTexture,
     
     enablePointSprites = function()
+        if(pi.MAC) then
         pi.gles.glEnable(pi.GL_POINT_SPRITE)  -- why do I need this?
         pi.gles.glEnable(pi.GL_VERTEX_PROGRAM_POINT_SIZE) -- why do I need this?
+        end
     end
 
 }
