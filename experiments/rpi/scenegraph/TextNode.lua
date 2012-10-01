@@ -7,7 +7,7 @@ but each instance has it's own geometry
 --]]
 
 local ffi = require("ffi");
-local pi = require("moonpiemac")
+local pi = require("moonpie")
 local util = require("util")
 local freetype = require("freetype")
 

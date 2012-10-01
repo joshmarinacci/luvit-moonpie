@@ -11,7 +11,7 @@ Scene holds global state. Currently
 
 
 local ffi = require("ffi");
-local pi = require("moonpiemac")
+local pi = require("moonpie")
 local util = require("util")
 
 Scene = {}

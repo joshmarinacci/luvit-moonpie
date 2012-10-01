@@ -1,5 +1,8 @@
 local ffi = require("ffi")
 
+
+
+
 --[[
 
 Note that the constants EGLAPI and EGLAPIENTRY get #defined to empty. It's
@@ -39,45 +42,34 @@ EGLBoolean eglSwapBuffers(EGLDisplay dpy, EGLSurface surface);
 
 
 
+print("os = " , jit.os )
+
+local LINUX = false
+local MAC = false
+
+if jit.os == "Linux" then
+    LINUX = true
+end
 
 
---joshpi.h
-ffi.cdef[[
-typedef struct
-{
-   uint32_t screen_width;
-   uint32_t screen_height;
-   
-// OpenGL|ES objects
-   EGLDisplay display;
-   EGLSurface surface;
-   EGLContext context;
-} PWindow;
-
-extern void foo(void);
-extern PWindow *createDefaultWindow(void);
-extern int get_mouse(int sw, int sh, int *outx, int *outy);
-
-
-
-
-
-]]
-
-
--- extras for this demo
-ffi.cdef[[
-typedef struct {
-    float Position[3];
-    float Color[4];
-} Vertex;
-
-
-]]
-
-
-function sleep(n)
-  os.execute("sleep " .. tonumber(n))
+if LINUX then
+    --joshpi.h
+    ffi.cdef[[
+    typedef struct
+    {
+       uint32_t screen_width;
+       uint32_t screen_height;
+       
+    // OpenGL|ES objects
+       EGLDisplay display;
+       EGLSurface surface;
+       EGLContext context;
+    } PWindow;
+    
+    extern void foo(void);
+    extern PWindow *createDefaultWindow(void);
+    extern int get_mouse(int sw, int sh, int *outx, int *outy);
+    ]]
 end
 
 
@@ -88,12 +80,15 @@ for i,v in pairs(headers) do
     --print("header = ",i,v)
     pi[i] = v
 end
-app = ffi.load("/home/josh/luvit-moonpie/experiments/rpi/libjoshpi.so")
-gles = ffi.load("/opt/vc/lib/libGLESv2.so")
-egl = ffi.load("/opt/vc/lib/libEGL.so")
-openmaxil = ffi.load("/opt/vc/lib/libopenmaxil.so")
-bcm_host = ffi.load("/opt/vc/lib/libbcm_host.so")
-vcos = ffi.load("/opt/vc/lib/libvcos.so")
+
+if LINUX then
+    app = ffi.load("/home/josh/luvit-moonpie/experiments/rpi/libjoshpi.so")
+    gles = ffi.load("/opt/vc/lib/libGLESv2.so")
+    egl = ffi.load("/opt/vc/lib/libEGL.so")
+    openmaxil = ffi.load("/opt/vc/lib/libopenmaxil.so")
+    bcm_host = ffi.load("/opt/vc/lib/libbcm_host.so")
+    vcos = ffi.load("/opt/vc/lib/libvcos.so")
+end
 
 
 -- code stolen from  https://github.com/malkia/ufo/blob/master/samples/OpenGLES2/test.lua
@@ -170,5 +165,7 @@ pi.createFullscreenWindow = createFullscreenWindow
 pi.getMouseState = getMouseState
 pi.loadShader = load_shader
 pi.egl = egl
+pi.LINUX = LINUX
+pi.MAC   = MAC
 
 return pi

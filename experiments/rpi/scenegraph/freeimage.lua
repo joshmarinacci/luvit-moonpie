@@ -1,4 +1,6 @@
-ffi = require("ffi")
+package.path = package.path .. ";../?.lua"
+local ffi = require("ffi")
+local pi = require("moonpie")
 
 -- freom the freeimage .h file
 
@@ -58,7 +60,13 @@ BYTE *   FreeImage_GetBits(FIBITMAP *dib);
 
 ]]
 
-local img = ffi.load("/usr/local/Cellar/freeimage/3.15.1/lib/libfreeimage.dylib")
+local img
+if (pi.MAC) then
+    img = ffi.load("/usr/local/Cellar/freeimage/3.15.1/lib/libfreeimage.dylib")
+end
+if (pi.LINUX) then
+    img = ffi.load("/usr/lib/libfreeimage.so.3")
+end
 
 function loadImage(filename)
     local textureFile = ffi.string(filename);

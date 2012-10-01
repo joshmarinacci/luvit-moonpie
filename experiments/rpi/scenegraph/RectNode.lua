@@ -8,7 +8,7 @@ but each instance of RectNode has it's own geometry.
 
 package.path = package.path .. ";../?.lua"
 local ffi = require("ffi");
-local pi = require("moonpiemac")
+local pi = require("moonpie")
 local util = require("util")
 
 RectNode = {}
