@@ -69,6 +69,7 @@ if LINUX then
     extern void foo(void);
     extern PWindow *createDefaultWindow(void);
     extern int get_mouse(int sw, int sh, int *outx, int *outy);
+    extern int get_keyboard(int *key, int *state);
     ]]
 end
 
@@ -141,10 +142,51 @@ local function createFullscreenWindow()
     window.height = w.screen_height
     window.display = w.display
     window.surface = w.surface
-    window.swap = function()
-        egl.eglSwapBuffers(w.display, w.surface)
+    
+    --setup window swap function
+    if(MAC) then
+        window.swap = function()
+            pi.glfw.glfwSwapBuffers();
+        end
     end
+    if(LINUX) then
+        window.swap = function()
+            egl.eglSwapBuffers(w.display, w.surface)
+        end
+    end
+    
+    --setup keyboard
+    if(MAC) then
+        pi.key_callback = function(key,state)
+            if window.keyboardCallback ~= nil then
+                local event = { key=key, state=state}
+                window.keyboardCallback(event)
+            end
+        end
+        --disable JIT for this callback to prevent segaults
+        jit.off(pi.glfw.glfwSetKeyCallback(ffi.cast("GLFWkeyfun",pi.key_callback)))
+    end
+
+    
+    -- a few quick debugging tests
+    print("vendor = ",     ffi.string(pi.gles.glGetString(pi.GL_VENDOR)))
+    print("renderer = ",   ffi.string(pi.gles.glGetString(pi.GL_RENDERER)))
+    print("version = ",    ffi.string(pi.gles.glGetString(pi.GL_VERSION)))
+    print("shading language version = ",    ffi.string(pi.gles.glGetString(pi.GL_SHADING_LANGUAGE_VERSION)))
+    print("extensions = ", ffi.string(pi.gles.glGetString(pi.GL_EXTENSIONS)))
+    
     return window
+end
+
+
+local function getKeyboardState()
+    local state = {}
+    local R_key   = ffi.new("int[1]")
+    local R_state = ffi.new("int[1]")
+    local k = app.get_keyboard(R_key,R_state);
+    state.key = R_key[0]
+    state.state = R_state[0]
+    return state
 end
 
 local function getMouseState()
@@ -163,6 +205,7 @@ end
 pi.gles = gles
 pi.createFullscreenWindow = createFullscreenWindow
 pi.getMouseState = getMouseState
+pi.getKeyboardState = getKeyboardState
 pi.loadShader = load_shader
 pi.egl = egl
 pi.LINUX = LINUX
