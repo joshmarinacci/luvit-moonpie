@@ -386,12 +386,13 @@ end
 if LINUX then
     pi.createFullscreenWindow = createFullscreenWindow_LINUX
     pi.getMouseState = getMouseState_LINUX
+    pi.getKeyboardState = getKeyboardState
 end
 if MAC then
     pi.createFullscreenWindow = createFullscreenWindow_MAC
     pi.getMouseState = getMouseState_MAC
+    pi.getKeyboardState = function() end
 end
-pi.getKeyboardState = getKeyboardState
 pi.loadShader = load_shader
 pi.egl = egl
 pi.LINUX = LINUX

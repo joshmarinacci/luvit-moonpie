@@ -220,11 +220,13 @@ while true do
        mouseCallback(mouse)
     end
     
-    local keyboard = pi.getKeyboardState();
-    if(keyboard.key ~= lastkey) then
-        processKey(keyboard)
+    if(pi.LINUX) then
+        local keyboard = pi.getKeyboardState();
+        if(keyboard.key ~= lastkey) then
+            processKey(keyboard)
+        end
+        lastkey = keyboard.key
     end
-    lastkey = keyboard.key
 
     oldMouse = mouse
 end

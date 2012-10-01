@@ -44,6 +44,7 @@ function showProgramLog(prog)
 end
 
 function buildShaderProgram(vshader_source, fshader_source)
+    checkError();
     local prog = pi.gles.glCreateProgram()
     showProgramLog(prog);
     checkError();
