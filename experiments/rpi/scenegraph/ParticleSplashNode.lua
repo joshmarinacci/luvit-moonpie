@@ -1,6 +1,6 @@
 package.path = package.path .. ";../?.lua"
-local ffi = require("ffi");
-local pi = require("moonpiemac")
+local ffi = require("ffi")
+local pi = require("moonpie")
 local util = require("util")
 local freeimage = require("freeimage")
 
@@ -24,7 +24,7 @@ function ParticleSplashNode:init()
     self.vbo = util.floatsToArrayBuffer(self.points,self.pointCount,self.elementCount)
 
 local vshader = [[
-#version 120
+#version 100
 attribute vec3  part;    //the particle: x,y,t
 varying   vec4  f_color;
 uniform   float time;
@@ -35,11 +35,11 @@ void main(void) {
     gl_PointSize = 8.0;
     
     float t = part.z;
-    float x = 0;
-    float y = 0;
+    float x = 0.0;
+    float y = 0.0;
     
     if(time > t) {
-        float dt = mod(time-t,1);
+        float dt = mod(time-t,1.0);
         x = dt*part.x/2.0;
         y = dt*part.y/2.0;
         age = dt;
@@ -52,7 +52,7 @@ void main(void) {
 
 -- color the particle using the texture * passed in color
 local fshader = [[
-#version 120
+#version 100
 uniform sampler2D tex;
 varying vec4 f_color;
 uniform float sprite;
@@ -60,15 +60,15 @@ varying float age;
 
 void main(void) {
     vec4 color2 = texture2D(tex, gl_PointCoord);
-    gl_FragColor = vec4(color2.r, color2.g, color2.b, color2.a*(1-age)) * f_color;
+    gl_FragColor = vec4(color2.r, color2.g, color2.b, color2.a*(1.0-age)) * f_color;
 }
 ]]
 
 --compile the shader
 self.shader = util.buildShaderProgram(vshader, fshader)
 --grab the slots
-self.part_slot     = gl.glGetAttribLocation(self.shader,"part")
-self.time_slot     = gl.glGetUniformLocation(self.shader,"time")
+self.part_slot     = pi.gles.glGetAttribLocation(self.shader,"part")
+self.time_slot     = pi.gles.glGetUniformLocation(self.shader,"time")
 self.tex_slot      = pi.gles.glGetUniformLocation(self.shader,"tex");
 
 
@@ -76,7 +76,7 @@ self.tex_slot      = pi.gles.glGetUniformLocation(self.shader,"tex");
 util.enablePointSprites()
 
 --turn on blending for the texture
-gl.glEnable(pi.GL_BLEND)
+pi.gles.glEnable(pi.GL_BLEND)
 
 --load the sprite image, then turn it into a texture
 self.image = freeimage.loadImage("sprite.png")
@@ -87,7 +87,7 @@ end
 
 
 function ParticleSplashNode:draw()
-    gl.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE)
+    pi.gles.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE)
     pi.gles.glUseProgram( self.shader )
     pi.gles.glActiveTexture(pi.GL_TEXTURE0)
     pi.gles.glBindTexture(pi.GL_TEXTURE_2D, self.texId)
@@ -95,13 +95,13 @@ function ParticleSplashNode:draw()
     
     
     --set our uniforms
-    gl.glUniform1i(self.tex_slot, 0)
-    gl.glUniform1f(self.time_slot, pi.getTime())
+    pi.gles.glUniform1i(self.tex_slot, 0)
+    pi.gles.glUniform1f(self.time_slot, 0)--pi.getTime())
     
-    gl.glBindBuffer(pi.GL_ARRAY_BUFFER, self.vbo) --turn on the buffer
-    gl.glEnableVertexAttribArray(self.part_slot) --enable the attribute
+    pi.gles.glBindBuffer(pi.GL_ARRAY_BUFFER, self.vbo) --turn on the buffer
+    pi.gles.glEnableVertexAttribArray(self.part_slot) --enable the attribute
     --draw the vertices using our buffer
-    gl.glVertexAttribPointer(
+    pi.gles.glVertexAttribPointer(
         self.part_slot, --attribute
         3, --number of elements per vertex (x & y & t)
         pi.GL_FLOAT, --type of each element
@@ -109,12 +109,12 @@ function ParticleSplashNode:draw()
         0, --no space between the values
         nil --use the vbo
     )
-    gl.glDrawArrays(pi.GL_POINTS, 0, self.pointCount) --draw it
+    pi.gles.glDrawArrays(pi.GL_POINTS, 0, self.pointCount) --draw it
 --[[
     ]]
     --gl.glDisableVertexAttribArray(self.part_slot) -- turn off the attribute
-    gl.glBindBuffer(pi.GL_ARRAY_BUFFER, 0) --turn off the buffer
-    gl.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE_MINUS_SRC_ALPHA)
+    pi.gles.glBindBuffer(pi.GL_ARRAY_BUFFER, 0) --turn off the buffer
+    pi.gles.glBlendFunc( pi.GL_SRC_ALPHA, pi.GL_ONE_MINUS_SRC_ALPHA)
 end
 
 
