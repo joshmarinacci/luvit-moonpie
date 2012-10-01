@@ -71,6 +71,11 @@ function RectNode:init()
     )
 end
 
+function RectNode:update()
+    self.vertexArray[4]=self.height
+    self.vertexArray[7]=self.height
+end
+
 function RectNode:draw(scene)
     pi.gles.glUseProgram( RectNode.shader )
     pi.gles.glUniformMatrix4fv(RectNode.projectionSlot, 1, pi.GL_FALSE, scene.projection )   
