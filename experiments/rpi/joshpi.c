@@ -234,11 +234,11 @@ int get_keyboard(int *key, int *state)
         return -1;
     }
     value = ev[0].value;
-    printf("read value %d\n",value);
+    //printf("read value %d\n",value);
     
     if (value != ' ' && ev[1].value == 1 && ev[1].type == 1){ // Only read the key press event
         printf ("Code[%d] type = %d, value = %d\n", (ev[1].code), ev[1].type,ev[1].value);
-        code = ev[1].code;
+        //code = ev[1].code;
     }
     
     if(key) *key = code;

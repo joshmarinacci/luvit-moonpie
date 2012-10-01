@@ -4,11 +4,9 @@ a simple scenegraph.  loops over list of objects to display
 three object types:  text, rect filled with color, and image
 --]]
 
-local ffi = require("ffi");
-
 package.path = package.path .. ";../?.lua"
 
-local pi = require("moonpiemac")
+local pi = require("moonpie")
 local util = require("util")
 local string = require("string")
 local EB = require("eventbus")
@@ -119,9 +117,9 @@ end)
 
 
 EB:onTimer(1, function()
-    print("timer happened")
+    --print("timer happened")
     local time = os.date("*t",os.time())
-    print("os.time = ", time.hour, " ",time.min, " ",time.sec)
+    --print("os.time = ", time.hour, " ",time.min, " ",time.sec)
     clock.textstring = time.hour..":"..time.min..":"..time.sec
 end)
 
@@ -173,6 +171,23 @@ scene.window.keyboardCallback = function(event)
     end
 end
 
+local keymap = {}
+keymap[30]=65
+keymap[48]=66
+keymap[46]=67
+keymap[32]=68
+keymap[18]=69
+keymap[33]=70
+keymap[34]=71
+keymap[35]=72
+
+local function processKey(state) 
+    if(state.key == 0) then return end
+    if (keymap[state.key] ~= nil) then
+        local code = keymap[state.key];
+        EB:fire("keytyped", {keycode = keymap[state.key]})
+    end
+end
 
 
 -- do initial setup
@@ -183,6 +198,7 @@ end
 print("going into the loop")
 local oldMouse = pi.getMouseState()
 
+local lastkey = 0
 
 while true do
     EB:tick(pi.getTime())
@@ -202,6 +218,12 @@ while true do
     if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y) then
        mouseCallback(mouse)
     end
+    
+    local keyboard = pi.getKeyboardState();
+    if(keyboard.key ~= lastkey) then
+        processKey(keyboard)
+    end
+    lastkey = keyboard.key
 
     oldMouse = mouse
 end
