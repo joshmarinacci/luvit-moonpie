@@ -47,6 +47,7 @@ function RectNode.loadShader()
     {
       gl_FragColor = vec4(color.r,color.g,color.b,1.0);
     }
+
     ]];
     
     RectNode.shader = util.buildShaderProgram(vshader_source, fshader_source)

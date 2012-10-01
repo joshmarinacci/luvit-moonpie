@@ -1,6 +1,6 @@
 package.path = package.path .. ";../?.lua"
 local ffi = require("ffi");
-local pi = require("moonpiemac")
+local pi = require("moonpie")
 local util = require("util")
 local freeimage = require("freeimage")
 
@@ -13,7 +13,6 @@ ImageNode.color = {1,1,1}
 
 function ImageNode:loadShader()
     local vshader_source = [[
-    #version 120
     attribute vec4 Position;
     attribute vec2 TextureCoords;
     uniform mat4 projection;
@@ -37,7 +36,6 @@ function ImageNode:loadShader()
     }
     ]]
     local fshader_source = [[
-    #version 120
     uniform vec3 color;
     uniform sampler2D tex;
     varying vec2 uv;

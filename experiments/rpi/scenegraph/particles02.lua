@@ -15,7 +15,7 @@ start time is incremental
 
 local ffi = require("ffi");
 package.path = package.path .. ";../?.lua"
-local pi = require("moonpiemac")
+local pi = require("moonpie")
 local util = require("util")
 local string = require("string")
 local EB = require("eventbus")
