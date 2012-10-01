@@ -250,7 +250,7 @@ end
 
 local face = R_face[0]
 print("the face = ",face)
-
+--[[
 -- set to 48 pt
 freetype.FT_Set_Pixel_Sizes(face,0,30)
 print("set the size to 14 pixels")
@@ -263,7 +263,7 @@ print("height = ",face.height)
 print("max_advance_width = ",face.max_advance_width)
 print("max_advance_height = ",face.max_advance_height)
 print("size = ",face.size)
-
+--]]
 
 
 -- load the glyph for the letter X
@@ -295,13 +295,11 @@ FT_LOAD_IGNORE_TRANSFORM             =bit.lshift(1, 11 )
 FT_LOAD_MONOCHROME                   =bit.lshift(1, 12 )
 FT_LOAD_LINEAR_DESIGN                =bit.lshift(1, 13 )
 FT_LOAD_NO_AUTOHINT                  =bit.lshift(1, 15 )
-print("render flag = ",FT.FT_LOAD_RENDER)
 
 -- 'X' == 88
 -- 'A' == 65
 -- 'a' == 97
 ret = freetype.FT_Load_Char(face, 97, FT.FT_LOAD_RENDER)
-print("ret = ",ret)
 if not ret == 0 then
     print("could not load character 'x'")
 end
@@ -312,6 +310,7 @@ FT_GlyphSlot g = face->glyph;
 ]]
 
 local g = face.glyph
+--[[
 print("glyph = ",g.bitmap)
 print("bitmap width = ",g.bitmap.width)
 print("bitmap pitch = ",g.bitmap.pitch)
@@ -326,7 +325,7 @@ print("metrics linear vert advance = ",g.linearVertAdvance/64)
 print("metrics bearing x = ",g.metrics.horiBearingX/64);
 print("metrics bearing y = ",g.metrics.horiBearingY/64);
 print("metrics advance   = ",g.metrics.horiAdvance/64);
-
+--]]
 
 local w = 0
 local h = 0

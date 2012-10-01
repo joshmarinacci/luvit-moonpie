@@ -18,19 +18,13 @@ TextNode.color = {0.0,0.0,0.0}
 TextNode.textstring = "PENNY penny"
 
 function TextNode.loadShader() 
-
-
-    print("final width, height = ", freetype.w, ",", freetype.h)
-    
-    
-    
     --setup the font text first
     pi.gles.glEnable(pi.GL_BLEND);
     pi.gles.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE_MINUS_SRC_ALPHA);
     checkError()
     
     local R_texId = ffi.new("GLuint[1]")
-    --pi.gles.glActiveTexture(pi.GL_TEXTURE0)
+    pi.gles.glActiveTexture(pi.GL_TEXTURE0)
     pi.gles.glGenTextures(1,R_texId)
     checkError()
     TextNode.texId = R_texId[0]
