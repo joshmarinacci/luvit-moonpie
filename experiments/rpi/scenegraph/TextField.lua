@@ -19,6 +19,7 @@ function TextField:init()
     
         local txt = sf.text.textstring;
         if(e.keycode >= 32 and e.keycode <= 126) then
+            print("typed a ", string.char(e.keycode))
             txt = txt .. string.char(e.keycode)
         end
         if(e.keycode == 295) then
