@@ -1,4 +1,5 @@
 local ffi = require("ffi");
+local pi = require("moonpie");
 
 
 function printStack()
@@ -14,19 +15,19 @@ function checkError()
         --print("no error")
     end
     if(err == pi.GL_INVALID_ENUM) then
-        print("Error: invalid enum before line",  debug.getinfo(2).currentline, " ", debug.getinfo(2).source, " ", debug.getinfo(2).short_src)
+        print("Error: invalid enum")
         printStack()
     end
     if(err == pi.GL_INVALID_VALUE) then
-        print("Error: invalid value before line",  debug.getinfo(2).currentline, " ", debug.getinfo(2).source, " ", debug.getinfo(2).short_src)
+        print("Error: invalid value")
         printStack()
     end
     if(err == pi.GL_INVALID_OPERATION) then
-        print("Error: invalid operation before line", debug.getinfo(2).currentline, " ", debug.getinfo(2).source, " ", debug.getinfo(2).short_src)
+        print("Error: invalid operation")
         printStack()
     end
     if(err == pi.GL_OUT_OF_MEMORY) then
-        print("Error: out of memory",  debug.getinfo(2).currentline, " ", debug.getinfo(2).source, " ", debug.getinfo(2).short_src)
+        print("Error: out of memory")
         printStack()
     end
 end
@@ -36,6 +37,7 @@ end
 
 function showProgramLog(prog)
    local log = ffi.new("char[1024]")
+   checkError();
    pi.gles.glGetProgramInfoLog(prog,1024,NULL,log);
    checkError();
    print("shader compiler log: ",ffi.string(log))
@@ -165,8 +167,8 @@ return {
     uploadImageAsTexture = uploadTexture,
     
     enablePointSprites = function()
-        --pi.gles.glEnable(pi.GL_POINT_SPRITE)  -- why do I need this?
-        --pi.gles.glEnable(pi.GL_VERTEX_PROGRAM_POINT_SIZE) -- why do I need this?
+        pi.gles.glEnable(pi.GL_POINT_SPRITE)  -- why do I need this?
+        pi.gles.glEnable(pi.GL_VERTEX_PROGRAM_POINT_SIZE) -- why do I need this?
     end
 
 }
