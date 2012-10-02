@@ -216,10 +216,10 @@ int get_keyboard(int *key, int *state)
     //open the device
     if(fd < 0) {
         if ((fd = open(device, O_RDONLY|O_NONBLOCK)) == -1) {
-            printf("%s is not\n",device);
+            //printf("%s is not\n",device);
         }
         ioctl (fd, EVIOCGNAME (sizeof (name)), name);
-        printf("Reading From : %s (%s)\n", device, name);
+        //printf("Reading From : %s (%s)\n", device, name);
     }
     
     
@@ -228,21 +228,29 @@ int get_keyboard(int *key, int *state)
     int size = sizeof(struct input_event);
     int value = 1;
     static int code = 0;
+    static int stateValue = 0;
     
     if ((rd = read (fd, ev, size * 64)) < size) {
         //printf("error reading\n");
         return -1;
     }
     value = ev[0].value;
-    //printf("read value %d\n",value);
+    //printf ("Code[%d] type = %d, value = %d\n", (ev[1].code), ev[1].type, ev[1].value);
     
     if (value != ' ' && ev[1].value == 1 && ev[1].type == 1){ // Only read the key press event
-        printf ("Code[%d] type = %d, value = %d\n", (ev[1].code), ev[1].type,ev[1].value);
-        //code = ev[1].code;
+        //printf ("Code[%d] type = %d, value = %d\n", (ev[1].code), ev[1].type, ev[1].value);
+        //printf("key press\n");
+        code = ev[1].code;
+        stateValue = 1;
+    }
+    if (value != ' ' && ev[1].value == 0 && ev[1].type == 1) { // key release event
+        //printf("key release\n");
+        code = ev[1].code;
+        stateValue = 0;
     }
     
     if(key) *key = code;
-    if(state) *state = 0;
+    if(state) *state = stateValue;
     
     return 0;
 }

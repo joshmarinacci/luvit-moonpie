@@ -70,6 +70,98 @@ function Scene:add(node)
 end
 
 
+local keymap = {}
+keymap[30]=97 -- A
+keymap[48]=98 -- B
+keymap[46]=99 -- C
+keymap[32]=100 -- D
+keymap[18]=101 -- E
+keymap[33]=102 -- F
+keymap[34]=103 -- G
+keymap[35]=104 -- H
+keymap[23]=105 -- I
+keymap[36]=106 -- J
+keymap[37]=107 -- K
+keymap[38]=108 -- L
+keymap[50]=109 -- M
+keymap[49]=110 -- N
+keymap[24]=111 -- O
+keymap[25]=112 -- P
+keymap[16]=113 -- P
+keymap[19]=114 -- P
+keymap[31]=115 -- P
+keymap[20]=116 -- P
+keymap[22]=117 -- P
+keymap[47]=118 -- P
+keymap[17]=119 -- P
+keymap[45]=120 -- P
+keymap[21]=121 -- P
+keymap[44]=122 -- P
+
+keymap[51]=44 --,
+keymap[52]=46 --.
+keymap[53]=47 --/
+
+for i=2,10,1 do -- the numbers
+    keymap[i]=i+47
+end
+keymap[11] = 48 -- 0
+
+keymap[12] = 45 -- -
+keymap[13] = 61 -- =
+keymap[43] = 92 -- =
+
+
+local shiftmap = {}
+for i=97,122,1 do
+    shiftmap[i]=i-(97-65)
+end
+
+shiftmap[44]=60 -- , <
+shiftmap[46]=62 -- , <
+shiftmap[47]=63 -- , <
+
+shiftmap[45] = 95 -- - _
+shiftmap[61] = 43 -- = +
+shiftmap[92] = 124-- = |
+
+--shiftmap[97]=65
+--shiftmap[98]=66
+--shift = 54
+
+local shiftPressed = false
+function keyboardCallback_LINUX(state) 
+    if(state.key == 0) then return end
+    if(state.key == 42 and state.state == 1) then 
+        shiftPressed = true
+    end
+    if(state.key == 42 and state.state == 0) then 
+        shiftPressed = false
+    end
+    if(state.key == 54 and state.state == 1) then 
+        shiftPressed = true
+    end
+    if(state.key == 54 and state.state == 0) then 
+        shiftPressed = false
+    end
+    print("key = ", state.key, " state = ",state.state, " shift = ", shiftPressed)
+    if (keymap[state.key] ~= nil) then
+        local code = keymap[state.key];
+        EB:fire("keytyped", {
+            keycode = keymap[state.key],
+            shift = shiftPressed,
+            asChar = function()
+                local ch = keymap[state.key]
+                print("shiftmap = ", shiftmap[keymap[state.key]], " shift = ", shiftPressed)
+                if(shiftPressed and shiftmap[ch] ~= nil) then
+                    return string.char(shiftmap[ch])
+                end
+                return string.char(keymap[state.key])
+            end
+        })
+    end
+end
+
 function keyboardCallback(event) 
     --print("I am the keyboard ", event.key, event.state)
     --local txt = commandbarText.textstring
@@ -133,9 +225,11 @@ function Scene.mouseCallback(event)
 end
 
 
+
 function Scene.loop()
     Scene.window.keyboardCallback = keyboardCallback
     local oldMouse = pi.getMouseState()
+    local lastkey = nil
 
     for i,n in ipairs(Scene.nodes) do 
         n:init()
@@ -148,6 +242,13 @@ function Scene.loop()
         if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y or mouse.left ~= oldMouse.left) then
            Scene.mouseCallback(mouse)
         end
+        if(pi.LINUX) then
+            local keyboard = pi.getKeyboardState();
+            if(keyboard.key ~= lastkey) then
+                keyboardCallback_LINUX(keyboard)
+            end
+            lastkey = keyboard.key
+        end
     
         Scene.clear()
         for i,n in ipairs(Scene.nodes) do 
@@ -155,6 +256,8 @@ function Scene.loop()
         end
         Scene.cursor:draw(Scene)
         oldMouse = mouse
+        
+        
         Scene.window.swap()
     end
     
