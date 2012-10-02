@@ -350,8 +350,8 @@ local function getMouseState_MAC()
     return {
         x=R_x[0],
         y=R_y[0],
-        leftdown=(left==1),
-        buttonstate= 0
+        left=(left==1),
+        button= 0
     }
 end
 

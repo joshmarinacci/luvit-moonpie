@@ -2,11 +2,17 @@ EventBus = {}
 EventBus.callbacks = {}
 EventBus.timers = {}
 
+local shared = nil
+
 function EventBus:new(o)
     o = o or {}
     setmetatable(o,self)
     self.__index = self
     return o
+end
+
+function EventBus:getShared()
+    return shared
 end
 
 function EventBus:on(name,callback)
@@ -46,5 +52,6 @@ function EventBus:tick(time)
 end
 
 
+shared = EventBus:new()
 
 return EventBus
