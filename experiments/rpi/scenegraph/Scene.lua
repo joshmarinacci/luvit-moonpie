@@ -13,6 +13,7 @@ Scene holds global state. Currently
 local ffi = require("ffi");
 local pi = require("moonpie")
 local util = require("util")
+require("RectNode")
 local EB = require('eventbus').getShared()
 
 Scene = {}
@@ -61,6 +62,7 @@ end
 
 function Scene.init()
     Scene.projection = Scene.loadOrthoMatrix(0,Scene.window.width,0,Scene.window.height,-1,1)
+    Scene.cursor = RectNode:new{x=0,y=0,width=16,height=16,color={1,1,1}}
 end
 
 function Scene:add(node)
@@ -111,6 +113,11 @@ end
 
 local leftDown = false
 function Scene.mouseCallback(event)
+    -- update the cursor first
+    Scene.cursor.x = event.x
+    Scene.cursor.y = event.y
+
+    -- send out mouse events
     if(event.left and not leftDown) then
         leftDown = true
         EB:fire("mousepress", {
@@ -134,6 +141,8 @@ function Scene.loop()
         n:init()
     end
     
+    Scene.cursor:init()
+    
     while true do
         local mouse = pi.getMouseState();
         if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y or mouse.left ~= oldMouse.left) then
@@ -144,6 +153,7 @@ function Scene.loop()
         for i,n in ipairs(Scene.nodes) do 
             n:draw(Scene)
         end
+        Scene.cursor:draw(Scene)
         oldMouse = mouse
         Scene.window.swap()
     end
