@@ -322,6 +322,8 @@ local function getKeyboardState()
     return state
 end
 
+local prevX = 0
+local prevY = 0
 local function getMouseState_LINUX()
     local state = {}
     
@@ -331,6 +333,14 @@ local function getMouseState_LINUX()
     state.buttonCode = b
     state.x = R_x[0]
     state.y = 768-R_y[0]
+    state.left = (state.buttonCode == 1)
+    if b > 0 then
+        state.x = prevX
+        state.y = prevY
+    else
+        prevX = state.x
+        prevY = state.y
+    end
     return state;
 end
 

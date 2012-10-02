@@ -136,7 +136,7 @@ function Scene.loop()
     
     while true do
         local mouse = pi.getMouseState();
-        if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y) then
+        if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y or mouse.left ~= oldMouse.left) then
            Scene.mouseCallback(mouse)
         end
     
@@ -144,6 +144,7 @@ function Scene.loop()
         for i,n in ipairs(Scene.nodes) do 
             n:draw(Scene)
         end
+        oldMouse = mouse
         Scene.window.swap()
     end
     
