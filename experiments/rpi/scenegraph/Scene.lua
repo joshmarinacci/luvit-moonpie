@@ -18,6 +18,7 @@ local EB = require('eventbus').getShared()
 
 Scene = {}
 Scene.nodes = {}
+Scene.anims = {}
 Scene.window = nil
 
 local function loadOrthoMatrix (left, right, top, bottom, near, far)
@@ -69,6 +70,9 @@ function Scene.add(node)
     table.insert(Scene.nodes,node)
 end
 
+function Scene.addAnim(anim)
+    table.insert(Scene.anims,anim)
+end
 
 local keymap = {}
 keymap[30]=97 -- A
@@ -239,6 +243,11 @@ function Scene.loop()
     
     while true do
         EB:tick(pi.getTime())
+        
+        for i,a in ipairs(Scene.anims) do
+            a:update(pi.getTime())
+        end
+        
         local mouse = pi.getMouseState();
         if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y or mouse.left ~= oldMouse.left) then
            Scene.mouseCallback(mouse)

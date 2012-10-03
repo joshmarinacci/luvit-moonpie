@@ -23,8 +23,9 @@ function ParticleSplashNode:init()
     --create an array buffer / vbo from the points array
     self.vbo = util.floatsToArrayBuffer(self.points,self.pointCount,self.elementCount)
 
+    
 local vshader = [[
-#version 120
+#version 100
 attribute vec3  part;    //the particle: x,y,t
 varying   vec4  f_color;
 uniform   float time;
@@ -52,7 +53,7 @@ void main(void) {
 
 -- color the particle using the texture * passed in color
 local fshader = [[
-#version 120
+#version 100
 uniform sampler2D tex;
 varying vec4 f_color;
 uniform float sprite;
@@ -70,7 +71,6 @@ self.shader = util.buildShaderProgram(vshader, fshader)
 self.part_slot     = pi.gles.glGetAttribLocation(self.shader,"part")
 self.time_slot     = pi.gles.glGetUniformLocation(self.shader,"time")
 self.tex_slot      = pi.gles.glGetUniformLocation(self.shader,"tex");
-
 
 -- enable point spriting (required on mac)
 util.enablePointSprites()
