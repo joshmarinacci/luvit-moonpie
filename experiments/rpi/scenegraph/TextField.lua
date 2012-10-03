@@ -25,7 +25,14 @@ function TextField:init()
         if(e.keycode == 295) then
             txt = string.sub(txt,1,#txt-1)
         end
-        sf.cursor.x = 270+(#txt)*16
+        --count the advances for the string
+        local metrics = self.text.getMetrics()
+        local xoff = 0
+        for i=1, #txt, 1 do
+            local n = string.byte(txt,i)
+            xoff = xoff + metrics[n].advance
+        end
+        sf.cursor.x = 270 + xoff
         sf.text.textstring = txt
     end)
     

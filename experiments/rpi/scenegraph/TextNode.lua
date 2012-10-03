@@ -147,6 +147,10 @@ function TextNode:init()
     self.vertexArray = ffi.new("float[15]")
 end
 
+function TextNode:getMetrics()
+    return TextNode.metrics
+end
+
 function TextNode:draw(scene)
    pi.gles.glUseProgram( TextNode.shader )
    pi.gles.glBindTexture(pi.GL_TEXTURE_2D, TextNode.texId)
