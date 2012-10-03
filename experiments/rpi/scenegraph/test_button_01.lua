@@ -22,7 +22,7 @@ local button = ButtonNode:new{
 }
 
 -- add it to the scene
-scene:add(button)
+scene.add(button)
 
 -- add an event handler
 local EB = require("eventbus").getShared()

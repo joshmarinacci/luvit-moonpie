@@ -6,7 +6,7 @@ TextField = {}
 function TextField:init()
     self.bg = RectNode:new{x=260, y=550, width=500-20, height=40, color={1,1,1}}
     self.bg:init()
-    self.text = TextNode:new{x=270, y=550, textstring="list"}
+    self.text = TextNode:new{x=270, y=550, textstring="list", color={0,0,0}}
     self.text:init()
     self.cursor = RectNode:new{x=400,y=554, width=2, height=30, color={1,0,0}}
     self.cursor:init()

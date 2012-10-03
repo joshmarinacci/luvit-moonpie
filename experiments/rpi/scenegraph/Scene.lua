@@ -65,7 +65,7 @@ function Scene.init()
     Scene.cursor = RectNode:new{x=0,y=0,width=16,height=16,color={1,1,1}}
 end
 
-function Scene:add(node)
+function Scene.add(node)
     table.insert(Scene.nodes,node)
 end
 

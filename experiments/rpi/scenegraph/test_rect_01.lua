@@ -6,23 +6,13 @@ local scene = require("Scene")
 
 -- all of the inits
 scene.window = pi.createFullscreenWindow()
-print('window = ', scene.window)
-scene.init()
+scene:init()
 require ("RectNode")
 RectNode.loadShader()
-require ("TextNode")
-TextNode.loadShader()
-require("TextField")
-
--- create a button
-local button = TextField:new{
-    x = 0,
-    y = 0,
-    text = "Engage!"
-}
+local r = RectNode:new{ x = 0, y = 0, width=100,height=100,color={1,0,1,}}
 
 -- add it to the scene
-scene.add(button)
+scene.add(r)
 
 
 scene.loop()
