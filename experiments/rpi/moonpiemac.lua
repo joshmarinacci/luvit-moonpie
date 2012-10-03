@@ -221,7 +221,7 @@ end
 
 
 local function getMouseState()
-    local R_x = ffi.new("unsigned int[1]", 0)
+    local R_x = ffi.new("unsigned int[1]")
     local R_y = ffi.new("unsigned int[1]", 0)
     glfw.glfwGetMousePos(R_x, R_y)
     

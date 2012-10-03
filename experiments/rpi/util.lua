@@ -106,7 +106,7 @@ end
 
 
 local function floatsToArrayBuffer(points, pointCount, elementSize) 
-print("inside floats to array buffer")
+    print("inside floats to array buffer")
     local floatSize = 4 --size of a GLfloat in bytes
     local R_vbo = ffi.new("GLuint[1]")
     pi.gles.glGenBuffers(1,R_vbo)
