@@ -238,6 +238,7 @@ function Scene.loop()
     Scene.cursor:init()
     
     while true do
+        EB:tick(pi.getTime())
         local mouse = pi.getMouseState();
         if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y or mouse.left ~= oldMouse.left) then
            Scene.mouseCallback(mouse)

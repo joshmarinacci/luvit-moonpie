@@ -13,7 +13,7 @@ ImageNode.color = {1,1,1}
 
 function ImageNode:loadShader()
     local vshader_source = [[
-    #version 120
+    #version 100
     attribute vec4 Position;
     attribute vec2 TextureCoords;
     uniform mat4 projection;
@@ -37,7 +37,7 @@ function ImageNode:loadShader()
     }
     ]]
     local fshader_source = [[
-    #version 120
+    #version 100
     uniform vec3 color;
     uniform sampler2D tex;
     varying vec2 uv;

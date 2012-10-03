@@ -43,7 +43,6 @@ function EventBus:tick(time)
             v.lastTime = time
         end
         jit.off()
-        --print("v.lasttime = ", v.lastTime)
         if(time - v.lastTime > v.period) then
             v.lastTime = time
             v.callback()
