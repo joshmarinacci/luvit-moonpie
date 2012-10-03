@@ -6,23 +6,12 @@ three object types:  text, rect filled with color, and image
 
 jit.off()
 package.path = package.path .. ";../?.lua"
-
 local pi = require("moonpie")
-local util = require("util")
-local string = require("string")
-local EB = require("eventbus")
-
-EB = EB:new()
-EB:on("foo",function()
-    print("foo happens")
-end)
-
-EB:fire("foo", {x=0,y=1})
-
---create a window
-scene = require("Scene")
+local scene = require("Scene")
+local EB = require('eventbus').getShared()
 scene.window = pi.createFullscreenWindow()
 scene:init()
+
 require ("RectNode")
 RectNode.loadShader()
 require ("TextNode")
@@ -31,7 +20,6 @@ require ("ImageNode")
 ImageNode.loadShader()
 require ("ParticleSplashNode")
 
-local nodes = {}
 --- set up some colors
 local white = {1,1,1}
 local black = {0,0,0}
@@ -40,45 +28,45 @@ local darkGray = {0.4,0.4,0.4}
 local red = {1.0,0,0}
 
 -- set up a scene
+scene.add(RectNode:new{x=0,   y=0, width=250, height=600, color=lightGray})
+scene.add(RectNode:new{x=250, y=0, width=500, height=600, color=darkGray})
+scene.add(RectNode:new{x=750, y=0, width=250, height=600, color=lightGray})
 
 
-
-local leftbar  = RectNode:new{x=0,   y=0, width=250, height=600, color=lightGray}
-local center   = RectNode:new{x=250, y=0, width=500, height=600, color=darkGray}
-local rightbar = RectNode:new{x=750, y=0, width=250, height=600, color=lightGray}
-table.insert(nodes, leftbar)
-table.insert(nodes, rightbar)
-table.insert(nodes, center)
-
+-- left sidebar
 local clock = TextNode:new{x=5,y=10,textstring="12:20"}
-table.insert(nodes,clock)
+scene.add(clock)
 
 local weather = TextNode:new{x=5,y=40, textstring="EUG: 70o, cloudy"}
-table.insert(nodes,weather)
+scene.add(weather)
 
 local bars = {}
 for i=1, 10, 1 do
     bars[i] = RectNode:new{x=i*10, y=440, width=8, height=10, color=red}
-    table.insert(nodes,bars[i])
+    scene.add(bars[i])
 end
-    
 
 local animRect = RectNode:new{x=0,y=0,width=20,height=20, color={1,1,0}}
-table.insert(nodes, animRect)
+scene.add(animRect)
+
+-- right sidebar
 
 local imageNode = ImageNode:new{x=770,y=100,width=200,height=200}
-table.insert(nodes, imageNode)
+scene.add(imageNode)
 
+
+-- particles
 local partNode = ParticleSplashNode:new{}
-table.insert(nodes, partNode)
+scene.add(partNode)
 
+
+-- animation
 local onstart = function()
 --    print("anim is starting")
 end
 local onend = function()
 --    print("anim is ending")
 end
-
 require("TranslateAnim")
 local anim = TranslateAnim:new{
     target=animRect,
@@ -93,10 +81,16 @@ local anim = TranslateAnim:new{
     }
 
 anim:start()
+scene.addAnim(anim)
 
+
+-- text field 
 require("TextField")
-local tf = TextField:new()
-table.insert(nodes,tf)
+local tf = TextField:new{x=0,y=0,text="foo"}
+scene.add(tf)
+
+
+-- event handling
 
 EB:on("action",function(e)
     if(e.source == tf) then
@@ -106,16 +100,11 @@ end)
 
 
 EB:onTimer(1, function()
-    --print("timer happened")
     local time = os.date("*t",os.time())
-    --print("os.time = ", time.hour, " ",time.min, " ",time.sec)
     clock.textstring = time.hour..":"..time.min..":"..time.sec
 end)
 
 EB:onTimer(6, function()
-    --print("timer happened")
-    --local time = os.date("*t",os.time())
-    --print("os.time = ", time.hour, " ",time.min, " ",time.sec)
     local w = {
         "cloudy",
         "sunny",
@@ -134,13 +123,7 @@ EB:onTimer(0.1, function()
     end
     
 end)
-
-mouseCallback = function(event)
-    --print("I am the mouse ", event.x, " ", event.y)
-end
-
-local shiftDown = false
-
+--[[
 scene.window.keyboardCallback = function(event) 
     --print("I am the keyboard ", event.key, event.state)
     --local txt = commandbarText.textstring
@@ -182,61 +165,6 @@ scene.window.keyboardCallback = function(event)
     end
 end
 
-local keymap = {}
-keymap[30]=65
-keymap[48]=66
-keymap[46]=67
-keymap[32]=68
-keymap[18]=69
-keymap[33]=70
-keymap[34]=71
-keymap[35]=72
+--]]
+scene.loop()
 
-local function processKey(state) 
-    if(state.key == 0) then return end
-    if (keymap[state.key] ~= nil) then
-        local code = keymap[state.key];
-        EB:fire("keytyped", {keycode = keymap[state.key]})
-    end
-end
-
-
--- do initial setup
-for i,n in ipairs(nodes) do 
-    n:init()
-end
-
-print("going into the loop")
-local oldMouse = pi.getMouseState()
-
-local lastkey = 0
-
-while true do
-    EB:tick(pi.getTime())
-    -- update the animations
-    anim:update(pi.getTime())
-
-    -- clear the screen
-    scene:clear()
-    -- draw all nodes
-    for i,n in ipairs(nodes) do 
-        n:draw(scene)
-    end
-
-    scene:swap()
-   
-    local mouse = pi.getMouseState();
-    if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y) then
-       mouseCallback(mouse)
-    end
-    
-    if(pi.LINUX) then
-        local keyboard = pi.getKeyboardState();
-        if(keyboard.key ~= lastkey) then
-            processKey(keyboard)
-        end
-        lastkey = keyboard.key
-    end
-
-    oldMouse = mouse
-end
