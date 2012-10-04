@@ -25,7 +25,6 @@ function ParticleSplashNode:init()
 
     
 local vshader = [[
-#version 100
 attribute vec3  part;    //the particle: x,y,t
 varying   vec4  f_color;
 uniform   float time;
@@ -53,7 +52,6 @@ void main(void) {
 
 -- color the particle using the texture * passed in color
 local fshader = [[
-#version 100
 uniform sampler2D tex;
 varying vec4 f_color;
 uniform float sprite;
@@ -65,8 +63,20 @@ void main(void) {
 }
 ]]
 
+    if(pi.MAC) then
+        vshader = "\n#version 120\n"..vshader
+    end
+    if(pi.LINUX) then
+        vshader = "#version 100\n"..vshader
+    end
+    if(pi.MAC) then
+        fshader = "\n#version 120\n"..fshader
+    end
+    if(pi.LINUX) then
+        fshader = "#version 100\n"..fshader
+    end
 --compile the shader
-self.shader = util.buildShaderProgram(vshader, fshader)
+self.shader = util.buildShaderProgram(ffi.string(vshader), ffi.string(fshader))
 --grab the slots
 self.part_slot     = pi.gles.glGetAttribLocation(self.shader,"part")
 self.time_slot     = pi.gles.glGetUniformLocation(self.shader,"time")
