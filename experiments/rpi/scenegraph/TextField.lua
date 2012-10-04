@@ -11,20 +11,35 @@ function TextField:init()
     self.cursor = RectNode:new{x=400,y=554, width=2, height=30, color={1,0,0}}
     self.cursor:init()
     local sf = self;
+    
     EB:on("keytyped",function(e)
+        print("typed ",e.asChar())
+    end)
+    EB:on("keyrelease",function(e)
+        --print("released ",e.asChar())
+    end)
+    EB:on("keypress",function(e)
+        --[[
         if(e.keycode == 294) then
             EB:fire("action",{source=sf})
             return
         end
-    
+        ]]
+        
         local txt = sf.text.textstring;
-        if(e.keycode >= 32 and e.keycode <= 126) then
-            print("typed a ", string.char(e.keycode))
-            txt = txt .. string.char(e.keycode)
-        end
-        if(e.keycode == 295) then
+        if(e.backspace) then
             txt = string.sub(txt,1,#txt-1)
         end
+        if not e.backspace then
+            txt = txt .. e.asChar()
+        end
+--        if(e.keycode >= 32 and e.keycode <= 126) then
+--            print("typed a ", string.char(e.keycode))
+--            txt = txt .. string.char(e.keycode)
+--        end
+--        if(e.keycode == 295) then
+--            txt = string.sub(txt,1,#txt-1)
+--        end
         --count the advances for the string
         local metrics = self.text.getMetrics()
         local xoff = 0

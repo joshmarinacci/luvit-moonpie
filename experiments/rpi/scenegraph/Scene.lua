@@ -91,16 +91,16 @@ keymap[50]=109 -- M
 keymap[49]=110 -- N
 keymap[24]=111 -- O
 keymap[25]=112 -- P
-keymap[16]=113 -- P
-keymap[19]=114 -- P
-keymap[31]=115 -- P
-keymap[20]=116 -- P
-keymap[22]=117 -- P
-keymap[47]=118 -- P
-keymap[17]=119 -- P
-keymap[45]=120 -- P
-keymap[21]=121 -- P
-keymap[44]=122 -- P
+keymap[16]=113 -- Q
+keymap[19]=114 -- R
+keymap[31]=115 -- S
+keymap[20]=116 -- T
+keymap[22]=117 -- U
+keymap[47]=118 -- V
+keymap[17]=119 -- W
+keymap[45]=120 -- X
+keymap[21]=121 -- Y
+keymap[44]=122 -- Z
 
 keymap[51]=44 --,
 keymap[52]=46 --.
@@ -129,6 +129,9 @@ shiftmap[45] = 95 -- - _
 shiftmap[61] = 43 -- = +
 shiftmap[92] = 124-- = |
 
+
+local BACKSPACE = 14
+
 --shiftmap[97]=65
 --shiftmap[98]=66
 --shift = 54
@@ -148,24 +151,50 @@ function keyboardCallback_LINUX(state)
     if(state.key == 54 and state.state == 0) then 
         shiftPressed = false
     end
-    print("key = ", state.key, " state = ",state.state, " shift = ", shiftPressed)
+    --print("key = ", state.key, " state = ",state.state, " shift = ", shiftPressed)
+    
+    if(state.key == BACKSPACE) then
+        local evt = {
+            keycode = -1,
+            shift = shiftPressed,
+            backspace = true,
+            asChar = function()
+                return nil
+            end
+        }
+        if (state.state == 1) then
+            EB:fire("keypress", evt)
+        end
+        if (state.state == 0) then
+            EB:fire("keyrelease", evt)
+        end
+    end
+    
     if (keymap[state.key] ~= nil) then
         local code = keymap[state.key];
-        EB:fire("keytyped", {
+        local evt = {
             keycode = keymap[state.key],
             shift = shiftPressed,
             asChar = function()
                 local ch = keymap[state.key]
-                print("shiftmap = ", shiftmap[keymap[state.key]], " shift = ", shiftPressed)
+                --print("shiftmap = ", shiftmap[keymap[state.key]], " shift = ", shiftPressed)
                 if(shiftPressed and shiftmap[ch] ~= nil) then
                     return string.char(shiftmap[ch])
                 end
                 return string.char(keymap[state.key])
             end
-        })
+        }
+            
+        if (state.state == 1) then
+            EB:fire("keypress", evt)
+        end
+        if (state.state == 0) then
+            EB:fire("keyrelease", evt)
+        end
     end
 end
 
+--[[
 function keyboardCallback(event) 
     --print("I am the keyboard ", event.key, event.state)
     --local txt = commandbarText.textstring
@@ -206,7 +235,7 @@ function keyboardCallback(event)
         end
     end
 end
-
+--]]
 local leftDown = false
 function Scene.mouseCallback(event)
     -- update the cursor first
@@ -231,7 +260,7 @@ end
 
 
 function Scene.loop()
-    Scene.window.keyboardCallback = keyboardCallback
+--    Scene.window.keyboardCallback = keyboardCallback
     local oldMouse = pi.getMouseState()
     local lastkey = nil
 
