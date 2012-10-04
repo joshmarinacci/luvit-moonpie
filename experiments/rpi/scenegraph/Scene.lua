@@ -194,48 +194,96 @@ function keyboardCallback_LINUX(state)
     end
 end
 
---[[
+local RAW_LEFT_SHIFT = 1
+local RAW_RIGHT_SHIFT = 2
+local RAW_BACKSPACE = 3
+local RAW_ENTER = 4
+
+local km2 = {}
+for i=65,90,1 do
+    km2[i] = i+(97-65)
+end
+km2[287] = RAW_LEFT_SHIFT
+km2[288] = RAW_RIGHT_SHIFT
+km2[295] = RAW_BACKSPACE
+km2[294] = RAW_ENTER
+
 function keyboardCallback(event) 
-    --print("I am the keyboard ", event.key, event.state)
-    --local txt = commandbarText.textstring
-    --printable chars
-    if(event.key >= 32 and event.key<=100) then
-        if(event.state == 1) then
-            
-            --A-Z
-            if(event.key >= 65 and event.key <= 90) then
-                --handle caps vs lowercase
-                if(shiftDown) then
-                    EB:fire("keytyped",{keycode=event.key+0})
-                    --txt = txt .. string.char(event.key+0)
-                else
-                    EB:fire("keytyped",{keycode=event.key+(97-65)})
-                    --txt = txt .. string.char(event.key+(97-65))
-                end
-            else
-                EB:fire("keytyped",{keycode=event.key})
-                --txt = txt .. string.char(event.key)
+    local key = km2[event.key]
+    print("I am the keyboard ", event.key, event.state)
+    if key == RAW_LEFT_SHIFT or key == RAW_RIGHT_SHIFT then
+        shiftPressed = (event.state == 1)
+        return
+    end
+    
+    if(key == RAW_ENTER) then
+        local evt = {
+            keycode = -1,
+            shift = shiftPressed,
+            enter = true,
+            asChar = function()
+                return nil
             end
+        }
+        if (event.state == 1) then
+            EB:fire("keypress", evt)
+        end
+        if (event.state == 0) then
+            EB:fire("keyrelease", evt)
+        end
+        return
+    end
+   
+    
+    if(key == RAW_BACKSPACE) then
+        local evt = {
+            keycode = -1,
+            shift = shiftPressed,
+            backspace = true,
+            asChar = function()
+                return nil
+            end
+        }
+        if (event.state == 1) then
+            EB:fire("keypress", evt)
+        end
+        if (event.state == 0) then
+            EB:fire("keyrelease", evt)
+        end
+        return
+    end
+    
+    if (key ~= nil) then
+        local code = key;
+        local evt = {
+            keycode = key,
+            shift = shiftPressed,
+            asChar = function()
+                if(shiftPressed and shiftmap[key] ~= nil) then
+                    return string.char(shiftmap[key])
+                end
+                return string.char(key)
+            end
+        }
+            
+        if (event.state == 1) then
+            EB:fire("keypress", evt)
+        end
+        if (event.state == 0) then
+            EB:fire("keyrelease", evt)
         end
     end
+    
+
+--[[    
     -- return/enter
     if(event.key == 294 and event.state == 0) then
         EB:fire("keytyped",{keycode=294})
     end
-    --backspace
-    if(event.key == 295 and event.state == 0) then
-        --txt = string.sub(txt,1,#txt-1)
-        EB:fire("keytyped",{keycode=295})
-    end
-    if(event.key == 287 or event.key == 288)then
-        if(event.state == 1) then 
-            shiftDown=true
-        else
-            shiftDown = false
-        end
-    end
+    ]]
 end
---]]
+
+
 local leftDown = false
 function Scene.mouseCallback(event)
     -- update the cursor first
@@ -260,7 +308,9 @@ end
 
 
 function Scene.loop()
---    Scene.window.keyboardCallback = keyboardCallback
+    --used only on mac
+    Scene.window.keyboardCallback = keyboardCallback
+    
     local oldMouse = pi.getMouseState()
     local lastkey = nil
 
@@ -281,6 +331,7 @@ function Scene.loop()
         if(mouse.x ~= oldMouse.x or mouse.y ~= oldMouse.y or mouse.left ~= oldMouse.left) then
            Scene.mouseCallback(mouse)
         end
+        --used only on linux
         if(pi.LINUX) then
             local keyboard = pi.getKeyboardState();
             if(keyboard.key ~= lastkey) then

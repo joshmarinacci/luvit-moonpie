@@ -251,17 +251,6 @@ local function createFullscreenWindow_LINUX()
         end
     end
     
-    --setup keyboard
-    if(MAC) then
-        pi.key_callback = function(key,state)
-            if window.keyboardCallback ~= nil then
-                local event = { key=key, state=state}
-                window.keyboardCallback(event)
-            end
-        end
-        --disable JIT for this callback to prevent segaults
-        jit.off(pi.glfw.glfwSetKeyCallback(ffi.cast("GLFWkeyfun",pi.key_callback)))
-    end
 
     
     -- a few quick debugging tests

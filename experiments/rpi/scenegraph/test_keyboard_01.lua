@@ -22,5 +22,8 @@ scene.add(r)
 EB:on("keytyped",function(e)
     print("typed: ",e.keycode,e.asChar())
 end)
+EB:on("action",function(e)
+    print("action: ")
+end)
 
 scene.loop()
