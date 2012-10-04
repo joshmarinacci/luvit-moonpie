@@ -13,7 +13,6 @@ ImageNode.color = {1,1,1}
 
 function ImageNode:loadShader()
     local vshader_source = [[
-    #version 100
     attribute vec4 Position;
     attribute vec2 TextureCoords;
     uniform mat4 projection;
@@ -37,7 +36,6 @@ function ImageNode:loadShader()
     }
     ]]
     local fshader_source = [[
-    #version 100
     uniform vec3 color;
     uniform sampler2D tex;
     varying vec2 uv;
@@ -48,6 +46,15 @@ function ImageNode:loadShader()
         gl_FragColor = vec4(color.r,color.g,color.b,1.0);
     }
     ]];
+    
+    if(pi.MAC) then
+        vshader_source = "#version 120\n"..vshader_source
+    end
+    if(pi.LINUX) then
+        vshader_source = "#version 100\n"..vshader_source
+    end
+    print("source = ", vshader_source)
+
     
     ImageNode.shader = util.buildShaderProgram(vshader_source, fshader_source)
     
