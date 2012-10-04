@@ -194,84 +194,65 @@ function keyboardCallback_LINUX(state)
     end
 end
 
-local RAW_LEFT_SHIFT = 1
-local RAW_RIGHT_SHIFT = 2
-local RAW_BACKSPACE = 3
-local RAW_ENTER = 4
-
+local k = require("keyboard_constants")
 local km2 = {}
 for i=65,90,1 do
     km2[i] = i+(97-65)
 end
-km2[287] = RAW_LEFT_SHIFT
-km2[288] = RAW_RIGHT_SHIFT
-km2[295] = RAW_BACKSPACE
-km2[294] = RAW_ENTER
+km2[285] = k.RAW_LEFT_ARROW
+km2[286] = k.RAW_RIGHT_ARROW
+
+km2[287] = k.RAW_LEFT_SHIFT
+km2[288] = k.RAW_RIGHT_SHIFT
+km2[295] = k.RAW_BACKSPACE
+km2[294] = k.RAW_ENTER
 
 function keyboardCallback(event) 
     local key = km2[event.key]
     print("I am the keyboard ", event.key, event.state)
-    if key == RAW_LEFT_SHIFT or key == RAW_RIGHT_SHIFT then
+    if key == k.RAW_LEFT_SHIFT or key == k.RAW_RIGHT_SHIFT then
         shiftPressed = (event.state == 1)
         return
     end
     
-    if(key == RAW_ENTER) then
-        local evt = {
-            keycode = -1,
-            shift = shiftPressed,
-            enter = true,
-            asChar = function()
-                return nil
-            end
-        }
-        if (event.state == 1) then
-            EB:fire("keypress", evt)
+    
+    local evt = {
+        keycode = key,
+        shift = shiftPressed,
+        printable = false,
+        asChar = function()
+            return nil
         end
-        if (event.state == 0) then
-            EB:fire("keyrelease", evt)
-        end
-        return
+    }
+    
+    
+    if(key == k.RAW_ENTER) then
+        evt.enter = true
+    end
+    if key == k.RAW_LEFT_ARROW then
+        evt.arrowLeft = true
     end
    
-    
-    if(key == RAW_BACKSPACE) then
-        local evt = {
-            keycode = -1,
-            shift = shiftPressed,
-            backspace = true,
-            asChar = function()
-                return nil
-            end
-        }
-        if (event.state == 1) then
-            EB:fire("keypress", evt)
-        end
-        if (event.state == 0) then
-            EB:fire("keyrelease", evt)
-        end
-        return
+    if(key == k.RAW_BACKSPACE) then
+        evt.backspace = true
     end
     
-    if (key ~= nil) then
-        local code = key;
-        local evt = {
-            keycode = key,
-            shift = shiftPressed,
-            asChar = function()
-                if(shiftPressed and shiftmap[key] ~= nil) then
-                    return string.char(shiftmap[key])
-                end
-                return string.char(key)
+    if key ~= nil and key >= 97 and key <= 122 then
+        evt.printable = true
+        evt.asChar = function()
+            if(shiftPressed and shiftmap[key] ~= nil) then
+                return string.char(shiftmap[key])
             end
-        }
-            
-        if (event.state == 1) then
-            EB:fire("keypress", evt)
+            return string.char(key)
         end
-        if (event.state == 0) then
-            EB:fire("keyrelease", evt)
-        end
+    end
+    
+    
+    if (event.state == 1) then
+        EB:fire("keypress", evt)
+    end
+    if (event.state == 0) then
+        EB:fire("keyrelease", evt)
     end
     
 

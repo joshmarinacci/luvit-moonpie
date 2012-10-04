@@ -1,6 +1,6 @@
 local EB = require("eventbus")
 
-
+local k = require("keyboard_constants")
 
 TextField = {}
 function TextField:init()
@@ -28,7 +28,11 @@ function TextField:init()
         if(e.backspace) then
             txt = string.sub(txt,1,#txt-1)
         end
-        if not e.backspace then
+        
+        if e.keycode == k.RAW_LEFT_ARROW then
+        end
+        
+        if e.printable then
             txt = txt .. e.asChar()
         end
         
