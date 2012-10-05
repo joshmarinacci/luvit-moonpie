@@ -14,6 +14,7 @@ local ffi = require("ffi");
 local pi = require("moonpie")
 local util = require("util")
 require("RectNode")
+require("ImageNode")
 local EB = require('eventbus').getShared()
 
 Scene = {}
@@ -63,7 +64,7 @@ end
 
 function Scene.init()
     Scene.projection = Scene.loadOrthoMatrix(0,Scene.window.width,0,Scene.window.height,-1,1)
-    Scene.cursor = RectNode:new{x=0,y=0,width=16,height=16,color={1,1,1}}
+    Scene.cursor = ImageNode:new{x=0,y=0,width=16,height=16,color={1,1,1},src="cursor.png"}
 end
 
 function Scene.add(node)

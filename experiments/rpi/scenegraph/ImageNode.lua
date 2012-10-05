@@ -11,7 +11,7 @@ ImageNode.width = 50
 ImageNode.height = 50
 ImageNode.color = {1,1,1}
 ImageNode.shaderloaded = false
-
+ImageNode.src = "earth.jpeg"
 function ImageNode:loadShader()
     if(ImageNode.shaderloaded) then return end
     ImageNode.shaderloaded = true
@@ -46,7 +46,7 @@ function ImageNode:loadShader()
     void main()
     {
         vec4 color = texture2D(tex, uv);
-        gl_FragColor = vec4(color.r,color.g,color.b,1.0);
+        gl_FragColor = vec4(color.r, color.g, color.b, color.a);
     }
     ]];
     
@@ -56,7 +56,7 @@ function ImageNode:loadShader()
     if(pi.LINUX) then
         vshader_source = "#version 100\n"..vshader_source
     end
-    print("source = ", vshader_source)
+    --print("source = ", vshader_source)
 
     
     ImageNode.shader = util.buildShaderProgram(vshader_source, fshader_source)
@@ -89,11 +89,13 @@ function ImageNode:init()
         1,0,
         0,0
     )
-    self.image = freeimage.loadImage("earth.jpeg")
+    self.image = freeimage.loadImage(self.src)
     self.texId = util.uploadImageAsTexture(self.image)
 end
 
 function ImageNode:draw(scene)
+    pi.gles.glEnable(pi.GL_BLEND)
+    pi.gles.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE_MINUS_SRC_ALPHA)
    
     pi.gles.glUseProgram( ImageNode.shader )
     pi.gles.glActiveTexture(pi.GL_TEXTURE0)
