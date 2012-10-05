@@ -284,6 +284,12 @@ function Scene.mouseCallback(event)
     if(not event.left and leftDown) then
         leftDown = false
     end
+    EB:fire("mousemove", {
+        kind="mousemove",
+        x=event.x,
+        y=event.y,
+        left=event.left
+    })
 end
 
 

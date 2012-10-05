@@ -48,6 +48,14 @@ function SliderNode:init()
         else
         end
     end)
+    EB:on("mousemove",function(e)
+        if(self:contains(e) and e.left) then
+            self.value = (e.x-self.x) / self.width
+            self.thumb.x = self.value * self.width
+            EB:fire("change",{kind='change', target=self, value=self.value})
+        else
+        end
+    end)
 end
 
 function SliderNode:draw(scene)
