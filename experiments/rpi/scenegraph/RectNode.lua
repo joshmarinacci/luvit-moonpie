@@ -17,8 +17,11 @@ RectNode.y = 100
 RectNode.width = 50
 RectNode.height = 50
 RectNode.color = {0.0,0.0,1.0}
+RectNode.shaderloaded = false
 
 function RectNode.loadShader()
+    if(RectNode.shaderloaded) then return end
+    RectNode.shaderloaded = true
     local vshader_source = [[
     attribute vec4 Position;
     uniform mat4 projection;
@@ -59,6 +62,7 @@ function RectNode.loadShader()
 end
 
 function RectNode:init()
+    RectNode.loadShader()
     local w = self.width
     local h = self.height
     self.vertexArray = ffi.new(
@@ -91,4 +95,5 @@ function RectNode:new(o)
     self.__index = self
     return o
 end
+
 

@@ -13,11 +13,8 @@ print('window = ', scene.window)
 scene:init()
 
 require ("RectNode")
-RectNode.loadShader()
-
 require ("TextNode")
-TextNode.loadShader()
-require("SliderNode")
+require ("SliderNode")
 local slider = SliderNode:new{
     x = 0,
     y = 0,

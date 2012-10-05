@@ -16,8 +16,11 @@ TextNode.x = 100
 TextNode.y = 200
 TextNode.color = {1.0,0.5,0.5}
 TextNode.textstring = "PENNY penny"
+TextNode.shaderloaded = false
 
 function TextNode.loadShader() 
+    if(TextNode.shaderloaded) then return end
+    TextNode.shaderloaded = true
     --setup the font text first
     pi.gles.glEnable(pi.GL_BLEND);
     pi.gles.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE_MINUS_SRC_ALPHA);
@@ -143,6 +146,7 @@ function TextNode.loadShader()
 end
 
 function TextNode:init()
+    TextNode.loadShader()
     self.coordArray = ffi.new("float[10]")
     self.vertexArray = ffi.new("float[15]")
 end

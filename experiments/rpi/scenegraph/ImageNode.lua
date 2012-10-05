@@ -10,8 +10,11 @@ ImageNode.y = 10
 ImageNode.width = 50
 ImageNode.height = 50
 ImageNode.color = {1,1,1}
+ImageNode.shaderloaded = false
 
 function ImageNode:loadShader()
+    if(ImageNode.shaderloaded) then return end
+    ImageNode.shaderloaded = true
     local vshader_source = [[
     attribute vec4 Position;
     attribute vec2 TextureCoords;
@@ -69,6 +72,7 @@ function ImageNode:loadShader()
 end
 
 function ImageNode:init()
+    ImageNode.loadShader()
     local w = self.width
     local h = self.height
     self.vertexArray = ffi.new("float[15]",
