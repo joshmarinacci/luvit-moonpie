@@ -126,10 +126,22 @@ shiftmap[44]=60 -- , <
 shiftmap[46]=62 -- , <
 shiftmap[47]=63 -- , <
 
+
+-- the number row
+shiftmap[48] = 41 -- 0 )
+shiftmap[49] = 33 -- 1 !
+shiftmap[50] = 64 -- 2 @
+shiftmap[51] = 35 -- 3 #
+shiftmap[52] = 36 -- 4 $
+shiftmap[53] = 37 -- 5 %
+shiftmap[54] = 94 -- 6 ^
+shiftmap[55] = 38 -- 7 &
+shiftmap[56] = 42 -- 8 *
+shiftmap[57] = 40 -- 9 (
+
 shiftmap[45] = 95 -- - _
 shiftmap[61] = 43 -- = +
 shiftmap[92] = 124-- = |
-
 
 local BACKSPACE = 14
 
@@ -197,8 +209,11 @@ end
 
 local k = require("keyboard_constants")
 local km2 = {}
-for i=65,90,1 do
+for i=65,90,1 do --cap letters
     km2[i] = i+(97-65)
+end
+for i=32,64,1 do --space, symbols, numbers
+    km2[i] = i
 end
 km2[285] = k.RAW_LEFT_ARROW
 km2[286] = k.RAW_RIGHT_ARROW
@@ -210,7 +225,7 @@ km2[294] = k.RAW_ENTER
 
 function keyboardCallback(event) 
     local key = km2[event.key]
-    print("I am the keyboard ", event.key, event.state)
+    print("I am the keyboard ", event.key, event.state, "key = ",key)
     if key == k.RAW_LEFT_SHIFT or key == k.RAW_RIGHT_SHIFT then
         shiftPressed = (event.state == 1)
         return
@@ -238,7 +253,7 @@ function keyboardCallback(event)
         evt.backspace = true
     end
     
-    if key ~= nil and key >= 97 and key <= 122 then
+    if key ~= nil and key >= 32 and key <= 122 then
         evt.printable = true
         evt.asChar = function()
             if(shiftPressed and shiftmap[key] ~= nil) then
@@ -256,13 +271,6 @@ function keyboardCallback(event)
         EB:fire("keyrelease", evt)
     end
     
-
---[[    
-    -- return/enter
-    if(event.key == 294 and event.state == 0) then
-        EB:fire("keytyped",{keycode=294})
-    end
-    ]]
 end
 
 
