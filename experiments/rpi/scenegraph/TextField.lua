@@ -3,7 +3,8 @@ local EB = require("eventbus")
 local k = require("keyboard_constants")
 
 TextField = {
-    col=0
+    col=0,
+    selection=nil
 }
 function TextField:init()
     self.bg = RectNode:new{x=260, y=550, width=500-20, height=40, color={1,1,1}}
@@ -12,6 +13,8 @@ function TextField:init()
     self.text:init()
     self.cursor = RectNode:new{x=270,y=554, width=2, height=30, color={1,0,0}}
     self.cursor:init()
+    self.selectionNode = RectNode:new{x=270,y=554, width=2, height=30, color={0,1,0}}
+    self.selectionNode:init()
     local sf = self;
     
     EB:on("keytyped",function(e)
@@ -41,30 +44,75 @@ function TextField:init()
         
         if e.keycode == k.RAW_LEFT_ARROW then
             sf:moveColumn(-1)
+            if e.shift then
+                sf:selectionLeft(1)
+            else
+                sf.selection = nil
+            end
             return
         end
         if e.keycode == k.RAW_RIGHT_ARROW then
             sf:moveColumn(1)
+            if e.shift then
+                sf:selectionRight(1)
+            else
+                sf.selection = nil
+            end
             return
         end
         
         if e.printable then
             local t1 = string.sub(txt,1,self.col)
             local t2 = string.sub(txt,self.col+1,#txt)
-            --print("t1 = ",t1, "  ",t2)
             sf.text.textstring = t1 .. e.asChar() .. t2
             sf:moveColumn(1)
             return
         end
         
-        --count the advances for the string
---        sf.cursor.x = 270 + xoff
---        sf.text.textstring = txt
---        sf.col = #txt
-        
---        print("column = " , sf.col, ", text length = ",#txt)
     end)
     self:setColumn(#self.text.textstring)
+end
+
+function TextField:selectionLeft(off)
+    if self.selection == nil then
+        self.selection = {s=self.col,e=self.col}
+    else
+        self.selection.s = self.selection.s - 1
+    end
+    if self.selection.s < 0 then
+        self.selection.s = 0
+    end
+    self:updateSelection()
+end
+
+function TextField:selectionRight(off)
+    if self.selection == nil then
+        self.selection = {s=self.col,e=self.col}
+    else
+        self.selection.e = self.selection.e + 1
+    end
+    if self.selection.e > #self.text.textstring then
+        self.selection.e = #self.text.textstring
+    end
+    self:updateSelection()
+end
+
+function TextField:updateSelection()
+    local x = self:calcWidth(string.sub(self.text.textstring,1,self.selection.s))
+    self.selectionNode.x = 270 + x    
+    local w = self:calcWidth(string.sub(self.text.textstring,self.selection.s,self.selection.e))
+    self.selectionNode.width = w
+    self.selectionNode:update()
+end
+
+function TextField:calcWidth(str)
+    local metrics = self.text.getMetrics()
+    local xoff = 0
+    for i=1, #str, 1 do
+        local n = string.byte(str,i)
+        xoff = xoff + metrics[n].advance
+    end
+    return xoff
 end
 
 function TextField:moveColumn(offset) 
@@ -73,7 +121,7 @@ function TextField:moveColumn(offset)
         self.col = #self.text.textstring
     end
     if self.col < 0 then
-        self.col = 1
+        self.col = 0
     end
     self:recalcCursor() 
 end
@@ -95,9 +143,13 @@ end
 
 function TextField:draw(scene)
     self.bg:draw(scene)
+    if self.selection ~= nil then
+        self.selectionNode:draw(scene)
+    end
     self.text:draw(scene)
     self.cursor:draw(scene)
 end
+
 function TextField:new(o)
     o = o or {}
     setmetatable(o,self)
