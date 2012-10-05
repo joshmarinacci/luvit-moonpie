@@ -16,4 +16,5 @@ return {
     RAW_C = string.byte("c",1),
     RAW_X = string.byte("x",1),
     RAW_V = string.byte("v",1),
+    RAW_Q = string.byte("q",1),
 }

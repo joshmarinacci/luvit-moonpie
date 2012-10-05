@@ -5,6 +5,8 @@ local pi = require("moonpie")
 local util = require("util")
 local string = require("string")
 local EB = require("eventbus").getShared()
+local k = require("keyboard_constants")
+
 scene = require("Scene")
 scene.window = pi.createFullscreenWindow()
 scene:init()
@@ -25,5 +27,6 @@ end)
 EB:on("action",function(e)
     print("action: ")
 end)
+
 
 scene.loop()
