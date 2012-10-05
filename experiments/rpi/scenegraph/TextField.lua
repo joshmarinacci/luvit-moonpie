@@ -1,6 +1,7 @@
 local EB = require("eventbus")
 
 local k = require("keyboard_constants")
+local clip = require("Clipboard").getShared()
 
 TextField = {
     col=0,
@@ -61,6 +62,23 @@ function TextField:init()
             return
         end
         
+        if e.command and e.keycode == k.RAW_C then
+            if sf.selection ~= nil then
+                clip:setString(sf:getSelection())
+            end
+            return
+        end
+        if e.command and e.keycode == k.RAW_V then
+            self:insertText(clip:getString())
+            sf.selection = nil
+            return
+        end
+        
+        --don't let command keys get beyond here
+        if e.command then
+            return
+        end
+        
         if e.printable then
             local t1 = string.sub(txt,1,self.col)
             local t2 = string.sub(txt,self.col+1,#txt)
@@ -71,6 +89,25 @@ function TextField:init()
         
     end)
     self:setColumn(#self.text.textstring)
+end
+
+function TextField:insertText(str)
+    local txt = self.text.textstring;
+    local t1 = string.sub(txt,1,self.col)
+    local t2 = string.sub(txt,self.col+1,#txt)
+    if self.selection ~= nil then
+        t1 = string.sub(txt,1,self.selection.s)
+        t2 = string.sub(txt,self.selection.e,#txt)
+    end
+    txt = t1 .. str .. t2
+    self.text.textstring = txt
+end
+
+function TextField:getSelection() 
+    return string.sub(
+        self.text.textstring
+        ,self.selection.s
+        ,self.selection.e)
 end
 
 function TextField:selectionLeft(off)
