@@ -222,6 +222,8 @@ km2[287] = k.RAW_LEFT_SHIFT
 km2[288] = k.RAW_RIGHT_SHIFT
 km2[295] = k.RAW_BACKSPACE
 km2[294] = k.RAW_ENTER
+km2[323] = k.RAW_LEFT_COMMAND
+km2[324] = k.RAW_RIGHT_COMMAND
 
 function keyboardCallback(event) 
     local key = km2[event.key]
@@ -230,11 +232,16 @@ function keyboardCallback(event)
         shiftPressed = (event.state == 1)
         return
     end
+    if key == k.RAW_LEFT_COMMAND or key == k.RAW_RIGHT_COMMAND then
+        commandPressed = (event.state == 1)
+        return
+    end
     
     
     local evt = {
         keycode = key,
         shift = shiftPressed,
+        command = commandPressed,
         printable = false,
         asChar = function()
             return nil
