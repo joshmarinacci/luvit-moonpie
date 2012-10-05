@@ -67,10 +67,10 @@ function RectNode:init()
     local h = self.height
     self.vertexArray = ffi.new(
        "float[15]",
-       0,0,0,
-       0,h,0,
-       w,h,0,
-       w,0,0,
+       0,0,0, --0,1,2
+       0,h,0, --3,4,5
+       w,h,0, --6,7,8
+       w,0,0, --9,
        0,0,0
     )
 end
@@ -78,6 +78,8 @@ end
 function RectNode:update()
     self.vertexArray[4]=self.height
     self.vertexArray[7]=self.height
+    self.vertexArray[6]=self.width
+    self.vertexArray[9]=self.width
 end
 
 function RectNode:draw(scene)
