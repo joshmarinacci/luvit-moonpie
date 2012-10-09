@@ -233,6 +233,8 @@ km2[294] = k.RAW_ENTER
 km2[323] = k.RAW_LEFT_COMMAND
 km2[324] = k.RAW_RIGHT_COMMAND
 
+local freeimage = require("freeimage")
+
 function keyboardCallback(event) 
     local key = km2[event.key]
     print("I am the keyboard ", event.key, event.state, "key = ",key)
@@ -245,6 +247,16 @@ function keyboardCallback(event)
         return
     end
     
+    if key == k.RAW_BACKSPACE and event.state == 0 then
+        print("we must do a screenshot")
+        local w = Scene.window.width
+        local h = Scene.window.height
+        local pixels = ffi.new("GLubyte["..(3*w*h).."]")
+        pi.gles.glReadPixels(0,0,w,h, pi.GL_RGB, pi.GL_UNSIGNED_BYTE, pixels)
+        local image = freeimage.FT.FreeImage_ConvertFromRawBits(pixels, w, h, 3 * w, 24, 0x0000FF, 0xFF0000, 0x00FF00, false)
+        freeimage.FT.FreeImage_Save(freeimage.FIF_BMP, image, "foo.bmp", 0);
+
+    end
     
     local evt = {
         keycode = key,

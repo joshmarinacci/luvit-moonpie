@@ -6,6 +6,9 @@ local pi = require("moonpie")
 
 ffi.cdef[[
 
+typedef int32_t BOOL;
+
+
 typedef int FREE_IMAGE_FORMAT; enum FREE_IMAGE_FORMAT {
 	FIF_UNKNOWN = -1,
 	FIF_BMP		= 0,
@@ -58,6 +61,10 @@ unsigned FreeImage_GetWidth(FIBITMAP *dib);
 unsigned FreeImage_GetHeight(FIBITMAP *dib);
 BYTE *   FreeImage_GetBits(FIBITMAP *dib);
 
+
+FIBITMAP *FreeImage_ConvertFromRawBits(BYTE *bits, int width, int height, int pitch, unsigned bpp, unsigned red_mask, unsigned green_mask, unsigned blue_mask, BOOL topdown);
+BOOL FreeImage_Save(FREE_IMAGE_FORMAT fif, FIBITMAP *dib, const char *filename, int flags);
+
 ]]
 
 local img
@@ -91,4 +98,5 @@ end
 return {
     FT=img,
     loadImage=loadImage,
+    FIF_BMP= 0,
 }

@@ -78,7 +78,9 @@ void   glPixelStorei (GLenum pname, GLint param);
 
 GLenum glGetError (void);
 void   glGetFloatv (GLenum pname, GLfloat* params);
-const GLubyte* glGetString (GLenum name);
+const  GLubyte* glGetString (GLenum name);
+
+void   glReadPixels (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, GLvoid* pixels);
 
 ]]
 
