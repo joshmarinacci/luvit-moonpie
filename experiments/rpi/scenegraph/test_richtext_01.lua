@@ -35,33 +35,31 @@ local bold = TextNode:new{x=270, y=550, textstring="list", color={0,1,0}, font=b
 
 --scene.add(text)
 
+
 local view1 = {
     render=function(str,style,x,y)
-        --print("plain: rendering = '",text, "' with style = ",style, " at ",x,",",y)
         text.x = x
         text.y = y
         text.textstring = str
         text:draw(scene)
+    end,
+    measure = function(ch)
+        return text.font.metrics[ch].w
     end
 }
+
 local view2 = {
     render=function(str,style,x,y)
-        --print("bold:  rendering = '",text, "' with style = ",style, " at ",x,",",y)
         bold.x = x
         bold.y = y
         bold.textstring = str
         bold:draw(scene)
+    end,
+    measure = function(str)
+        return text.font.metrics[ch].w
     end
 }
 
-local seg1 = { style="plain",   text="foo",   view=view1, width=35, height=10}
-local seg2 = { style="bold",    text="bar",   view=view2, width=44, height=20}
-local seg3 = { style="plain",   text="baz",   view=view1, width=50, height=10}
-local seg4 = { style="bold",    text="quxx",  view=view2, width=50, height=20}
-
-local line1 = {segs={seg1,seg2,seg3}, height=30}
-local line2 = {segs={seg4}, height=30}
-local lines = {line1,line2}
 
 
 function render(lines,scene)
@@ -77,16 +75,48 @@ function render(lines,scene)
 end
 
 
+function layout(str)
+    local lines = {}
+    
+    local maxlen = 200
+    local view = view1
+    local s = ""
+    local len = 0
+    for i=1, #str, 1 do
+        local ch = string.sub(str,i,i)
+        len = len + view.measure(string.byte(ch,1))
+        if len < maxlen then
+            s = s .. ch
+        else
+            local seg = { style="plain", text=s, view=view, width=35, height=30}
+            local line = {segs={seg}, height=30}
+            table.insert(lines,line)
+            s = ch
+            len = 0
+            print("adding line")
+        end
+    end
+    local seg = { style="plain", text=s, view=view, width=35, height=30}
+    local line = {segs={seg}, height=30}
+    table.insert(lines,line)
+    return lines
+end
+
+
 local rt = {
-    init = function()
+    lines = nil,
+    str = "",
+    init = function(self)
         text:init()
         bold:init()
+        self.lines = layout(self.str)
     end,
     draw = function(self,scene)
-        render(lines,scene)
+        render(self.lines,scene)
     end,
 }
 
+rt.str = "This is a long run of text that we have to wrap into multiple lines each with a segment."
 
 scene.add(rt)
 
