@@ -8,11 +8,11 @@ local Font = {
 Font.__index = Font
 
 function Font:init()
-    print("i am ",self, self.FT)
     if(self.inited) then return end
-    print("initing a font")
+    self.inited = true
+    print("initing a font with name = ", self.name, " size = ",self.size)
     local R_face = ffi.new("FT_Face[1]")
-    print("created a new font face reference")
+    --print("created a new font face reference")
     ret = self.FT.freetype.FT_New_Face(self.FT.ft, "ssp-reg.ttf", 0, R_face)
     if not ret == 0 then
         printf("Could not open the font")
@@ -21,11 +21,11 @@ function Font:init()
     
     local face = R_face[0]
     self.face = face
-    print("the face = ",face)
+--    print("the face = ",face)
     
     
 --    print("num faces = ",face.num_faces)
-    print("num glyphs = ",face.num_glyphs)
+--    print("num glyphs = ",face.num_glyphs)
 --    print("family name = ",face.family_name)
 --    print("style name = ",face.style_name)
 --    print("height = ",face.height)
@@ -33,17 +33,14 @@ function Font:init()
 --    print("max_advance_height = ",face.max_advance_height)
 --    print("size = ",face.size)
     
-    self.FT.freetype.FT_Set_Pixel_Sizes(face,0,30)
-    print("set the size to 30 pixels")
+    self.FT.freetype.FT_Set_Pixel_Sizes(face,0,self.size)
     ret = self.FT.freetype.FT_Load_Char(face, 97, self.FT.FT_LOAD_RENDER)
     if not ret == 0 then
         print("could not load character 'a'")
     end
     
-    print("getting g")
     local g = face.glyph
     
-    print("got g")
     local w = 0
     local h = 0
     for i=32,128,1 do
@@ -59,7 +56,7 @@ function Font:init()
     self.w = w
     self.h = h
     
-    print("final width, height = ", self.w, ",", self.h)
+    --print("final width, height = ", self.w, ",", self.h)
     
     
     --set up the opengl texture
@@ -99,7 +96,6 @@ function Font:init()
         nil);
     checkError()
     
-    print('set up a new empty texture')
     -- copy the glyphs into the texture
     
     local metrics = {}
@@ -136,13 +132,13 @@ function Font:init()
     
     checkError();
     self.metrics = metrics
-    print("finished loading the glyphs")
     checkError();
+    print("finished loading the glyphs")
     
 end
 
 function Font:new(name,size) 
-    return setmetatable({name,size},Font)
+    return setmetatable({name=name,size=size},Font)
 end
 
 

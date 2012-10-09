@@ -240,31 +240,7 @@ end
 local ft = R_ft[0];
 FT.ft = ft
 
---load FreeSans.ttf from disk
-
-
---[[
-print("num faces = ",face.num_faces)
-print("num glyphs = ",face.num_glyphs)
-print("family name = ",face.family_name)
-print("style name = ",face.style_name)
-print("height = ",face.height)
-print("max_advance_width = ",face.max_advance_width)
-print("max_advance_height = ",face.max_advance_height)
-print("size = ",face.size)
---]]
-
-
--- load the glyph for the letter X
---[[
-if(FT_Load_Char(face, 'X', FT_LOAD_RENDER)) {
-  fprintf(stderr, "Could not load character 'X'\n");
-  return 1;
-}
-]]
-
 local bit = require("bit")
-
 
 
 FT.FT_LOAD_RENDER              =  bit.lshift( 1 , 2 )
@@ -285,58 +261,20 @@ FT_LOAD_MONOCHROME                   =bit.lshift(1, 12 )
 FT_LOAD_LINEAR_DESIGN                =bit.lshift(1, 13 )
 FT_LOAD_NO_AUTOHINT                  =bit.lshift(1, 15 )
 
--- 'X' == 88
--- 'A' == 65
--- 'a' == 97
---ret = freetype.FT_Load_Char(face, 97, FT.FT_LOAD_RENDER)
---if not ret == 0 then
---    print("could not load character 'a'")
---end
-
---[[
--- define a shortcut
-FT_GlyphSlot g = face->glyph;
-]]
-
---local g = face.glyph
---[[
-print("glyph = ",g.bitmap)
-print("bitmap width = ",g.bitmap.width)
-print("bitmap pitch = ",g.bitmap.pitch)
-print("bitmap rows = ",g.bitmap.rows)
-print("left = ",g.bitmap_left)
-print("top = ",g.bitmap_top)
-print("metrics = ",g.metrics)
-print("metrics width = ",g.metrics.width/64)
-print("metrics height = ",g.metrics.height/64)
-print("metrics linear hori advance = ",g.linearHoriAdvance/64)
-print("metrics linear vert advance = ",g.linearVertAdvance/64)
-print("metrics bearing x = ",g.metrics.horiBearingX/64);
-print("metrics bearing y = ",g.metrics.horiBearingY/64);
-print("metrics advance   = ",g.metrics.horiAdvance/64);
---]]
-
 
 --calculate the width and height of the font
-
---print("final width, height = ", w, ",", h)
 
 FT.freetype=freetype
 
 FT.fonts = {}
-local dd = Font:new("ssp-reg.ttf",30)
-dd.FT = FT
-print('defualt font = ', dd)
---dd:init(FT)
-FT.fonts.default = dd
+FT.fonts['default'] = Font:new("ssp-reg.ttf",20)
+FT.fonts['default'].FT = FT
+FT.fonts['bold'] = Font:new("ssp-reg.ttf",30)
+FT.fonts['bold'].FT = FT
 
 
---FT.w=w
---FT.h=h
---FT.face = face
---FT.g = g
 FT.getFont = function(name,size)
-    return FT.fonts.default
+    return FT.fonts[name]
 end
 return FT
 

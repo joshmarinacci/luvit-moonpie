@@ -29,7 +29,7 @@ demo
 local maxwidth = 300
 
 local plain_font = FT.getFont("default")
-local bold_font = FT.getFont("default")
+local bold_font = FT.getFont("bold")
 local text = TextNode:new{x=270, y=550, textstring="list", color={0,0,0}, font=plain_font}
 local bold = TextNode:new{x=270, y=550, textstring="list", color={0,1,0}, font=bold_font}
 
@@ -54,10 +54,10 @@ local view2 = {
     end
 }
 
-local seg1 = { style="plain",   text="foo",   view=view1, width=50}
-local seg2 = { style="bold",    text="bar",   view=view2, width=50}
-local seg3 = { style="plain",   text="baz",   view=view1, width=50}
-local seg4 = { style="bold",    text="quxx",  view=view2, width=50}
+local seg1 = { style="plain",   text="foo",   view=view1, width=35, height=10}
+local seg2 = { style="bold",    text="bar",   view=view2, width=44, height=20}
+local seg3 = { style="plain",   text="baz",   view=view1, width=50, height=10}
+local seg4 = { style="bold",    text="quxx",  view=view2, width=50, height=20}
 
 local line1 = {segs={seg1,seg2,seg3}, height=30}
 local line2 = {segs={seg4}, height=30}
@@ -70,7 +70,7 @@ function render(lines,scene)
         local x = 0
         y = y + line.height
         for j,seg in ipairs(line.segs) do
-            seg.view.render(seg.text,seg.style,x,y)
+            seg.view.render(seg.text,seg.style,x,y-seg.height)
             x = x + seg.width
         end
     end
