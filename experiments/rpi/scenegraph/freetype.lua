@@ -1,4 +1,5 @@
 local ffi = require("ffi")
+local Font = require("Font")
 ffi.cdef[[
   typedef signed long  FT_Long;
   typedef unsigned int  FT_UInt;
@@ -226,6 +227,7 @@ ffi.cdef[[
 
 local freetype = ffi.load("freetype")
 
+local FT = {}
 
 -- initialize freetype library
 local R_ft = ffi.new("FT_Library[1]");
@@ -236,22 +238,11 @@ if(ret > 0) then
   return 1;
 end
 local ft = R_ft[0];
+FT.ft = ft
 
 --load FreeSans.ttf from disk
 
 
-local R_face = ffi.new("FT_Face[1]")
-print("created a new font face reference")
-ret = freetype.FT_New_Face(ft, "ssp-reg.ttf", 0, R_face)
-if not ret == 0 then
-    printf("Could not open the font")
-    return 1
-end
-
-local face = R_face[0]
-print("the face = ",face)
-freetype.FT_Set_Pixel_Sizes(face,0,30)
-print("set the size to 30 pixels")
 --[[
 print("num faces = ",face.num_faces)
 print("num glyphs = ",face.num_glyphs)
@@ -275,7 +266,6 @@ if(FT_Load_Char(face, 'X', FT_LOAD_RENDER)) {
 local bit = require("bit")
 
 
-local FT = {}
 
 FT.FT_LOAD_RENDER              =  bit.lshift( 1 , 2 )
 FT.FT_LOAD_DEFAULT                   =  0x0
@@ -298,17 +288,18 @@ FT_LOAD_NO_AUTOHINT                  =bit.lshift(1, 15 )
 -- 'X' == 88
 -- 'A' == 65
 -- 'a' == 97
-ret = freetype.FT_Load_Char(face, 97, FT.FT_LOAD_RENDER)
-if not ret == 0 then
-    print("could not load character 'a'")
-end
+--ret = freetype.FT_Load_Char(face, 97, FT.FT_LOAD_RENDER)
+--if not ret == 0 then
+--    print("could not load character 'a'")
+--end
 
 --[[
 -- define a shortcut
 FT_GlyphSlot g = face->glyph;
 ]]
 
-local g = face.glyph
+--local g = face.glyph
+--[[
 print("glyph = ",g.bitmap)
 print("bitmap width = ",g.bitmap.width)
 print("bitmap pitch = ",g.bitmap.pitch)
@@ -323,31 +314,30 @@ print("metrics linear vert advance = ",g.linearVertAdvance/64)
 print("metrics bearing x = ",g.metrics.horiBearingX/64);
 print("metrics bearing y = ",g.metrics.horiBearingY/64);
 print("metrics advance   = ",g.metrics.horiAdvance/64);
+--]]
 
-local w = 0
-local h = 0
-for i=32,128,1 do
-    ret = freetype.FT_Load_Char(face, i, FT.FT_LOAD_RENDER)
-    if not ret == 0 then
-        print("could not load character",i)
-    end
-    w = w + g.bitmap.width
-    if(g.bitmap.rows > h) then
-        h = g.bitmap.rows
-    end
-end
 
-print("final width, height = ", w, ",", h)
+--calculate the width and height of the font
 
-    
+--print("final width, height = ", w, ",", h)
+
 FT.freetype=freetype
-FT.w=w
-FT.h=h
-FT.face = face
-FT.g = g
+
+FT.fonts = {}
+local dd = Font:new("ssp-reg.ttf",30)
+dd.FT = FT
+print('defualt font = ', dd)
+--dd:init(FT)
+FT.fonts.default = dd
+
+
+--FT.w=w
+--FT.h=h
+--FT.face = face
+--FT.g = g
+FT.getFont = function(name,size)
+    return FT.fonts.default
+end
 return FT
---freetype{}
---freetype.w = w
---freetype.h = h
 
 

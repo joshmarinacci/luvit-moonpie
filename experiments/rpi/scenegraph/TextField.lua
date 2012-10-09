@@ -169,7 +169,7 @@ function TextField:setColumn(col)
 end
 
 function TextField:recalcCursor()
-    local metrics = self.text.getMetrics()
+    local metrics = self.text:getMetrics()
     local xoff = 0
     for i=1, self.col, 1 do
         local n = string.byte(self.text.textstring,i)

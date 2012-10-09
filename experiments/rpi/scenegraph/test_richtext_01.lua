@@ -10,6 +10,7 @@ print('window = ', scene.window)
 scene:init()
 require ("RectNode")
 require ("TextNode")
+FT = require("freetype")
 
 --[[
 implement the render algorithm before the layout algorithm, then do the editing algorithm.
@@ -27,7 +28,10 @@ demo
 
 local maxwidth = 300
 
-local text = TextNode:new{x=270, y=550, textstring="list", color={0,0,0}}
+local plain_font = FT.getFont("default")
+local bold_font = FT.getFont("default")
+local text = TextNode:new{x=270, y=550, textstring="list", color={0,0,0}, font=plain_font}
+local bold = TextNode:new{x=270, y=550, textstring="list", color={0,1,0}, font=bold_font}
 
 --scene.add(text)
 
@@ -43,10 +47,10 @@ local view1 = {
 local view2 = {
     render=function(str,style,x,y)
         --print("bold:  rendering = '",text, "' with style = ",style, " at ",x,",",y)
-        text.x = x
-        text.y = y
-        text.textstring = str
-        text:draw(scene)
+        bold.x = x
+        bold.y = y
+        bold.textstring = str
+        bold:draw(scene)
     end
 }
 
@@ -76,14 +80,13 @@ end
 local rt = {
     init = function()
         text:init()
+        bold:init()
     end,
     draw = function(self,scene)
         render(lines,scene)
-        text:draw(scene)
     end,
 }
 
---render(lines)
 
 scene.add(rt)
 

@@ -17,85 +17,11 @@ TextNode.y = 200
 TextNode.color = {1.0,0.5,0.5}
 TextNode.textstring = "PENNY penny"
 TextNode.shaderloaded = false
+TextNode.font = freetype.getFont("default")
 
 function TextNode.loadShader() 
     if(TextNode.shaderloaded) then return end
     TextNode.shaderloaded = true
-    --setup the font text first
-    pi.gles.glEnable(pi.GL_BLEND);
-    pi.gles.glBlendFunc(pi.GL_SRC_ALPHA, pi.GL_ONE_MINUS_SRC_ALPHA);
-    checkError()
-    
-    local R_texId = ffi.new("GLuint[1]")
-    --pi.gles.glActiveTexture(pi.GL_TEXTURE0)
-    pi.gles.glGenTextures(1,R_texId)
-    checkError()
-    TextNode.texId = R_texId[0]
-    pi.gles.glBindTexture(pi.GL_TEXTURE_2D, TextNode.texId)
-    checkError()
-    --pi.gles.glUniform1i(uniform_tex, 0)
-    --pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_NEAREST)
-    --pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_NEAREST)
-    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_WRAP_S, pi.GL_CLAMP_TO_EDGE)
-    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_WRAP_T, pi.GL_CLAMP_TO_EDGE)
-    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MIN_FILTER, pi.GL_LINEAR)
-    pi.gles.glTexParameteri(pi.GL_TEXTURE_2D, pi.GL_TEXTURE_MAG_FILTER, pi.GL_LINEAR)
-    
-    print("w & h = ",freetype.w, freetype.h)
-    pi.gles.glPixelStorei(pi.GL_UNPACK_ALIGNMENT, 1)
-    checkError()
-    -- create an empty texture of the right size
-    pi.gles.glTexImage2D(
-        pi.GL_TEXTURE_2D, 
-        0, 
-        pi.GL_ALPHA,  -- internal format
-        freetype.w,   -- width of texture
-        freetype.h,   -- height of texture
-        0,            -- border?
-        pi.GL_ALPHA,  -- kind of pixel data
-        pi.GL_UNSIGNED_BYTE,  -- format of pixel data
-        nil);
-    checkError()
-    
-    -- copy the glyphs into the texture
-    
-    local metrics = {}
-    checkError();
-    
-    local x = 0
-    for i=32,128,1 do
-        --load each char
-        ret = freetype.freetype.FT_Load_Char(freetype.face, i, freetype.FT_LOAD_RENDER)
-        if not ret == 0 then
-            print("could not load character",i)
-        end
-        pi.gles.glTexSubImage2D(
-            pi.GL_TEXTURE_2D, 
-            0,
-            x,
-            0,
-            freetype.g.bitmap.width,
-            freetype.g.bitmap.rows,
-            pi.GL_ALPHA,
-            pi.GL_UNSIGNED_BYTE,
-            freetype.g.bitmap.buffer
-        )
-    checkError()
-        metrics[i] = {
-            x=x,
-            w=freetype.g.bitmap.width,
-            h=freetype.g.bitmap.rows,
-            bx=freetype.g.metrics.horiBearingX/64,
-            by=freetype.g.metrics.horiBearingY/64,
-            advance=freetype.g.metrics.horiAdvance/64,
-        }
-        x = x + freetype.g.bitmap.width
-    end
-    
-    checkError();
-    TextNode.metrics = metrics
-    print("finished loading the glyphs")
-    checkError();
     
     checkError()
     --now we can set up the shaders
@@ -147,23 +73,24 @@ end
 
 function TextNode:init()
     TextNode.loadShader()
+    self.font:init()
     self.coordArray = ffi.new("float[10]")
     self.vertexArray = ffi.new("float[15]")
 end
 
 function TextNode:getMetrics()
-    return TextNode.metrics
+    return self.font.metrics
 end
 
 function TextNode:draw(scene)
    pi.gles.glUseProgram( TextNode.shader )
-   pi.gles.glBindTexture(pi.GL_TEXTURE_2D, TextNode.texId)
+   pi.gles.glBindTexture(pi.GL_TEXTURE_2D, self.font.texId)
    local xoff = 0
    local arr = self.coordArray
    local vertexArray = self.vertexArray
-   local metrics = TextNode.metrics
-   local w = freetype.w
-   local h = freetype.h
+   local metrics = self.font.metrics
+   local w = self.font.w
+   local h = self.font.h
    for i=1, #self.textstring, 1 do
        local n = string.byte(self.textstring,i)
        local fx = metrics[n].x/w
@@ -181,7 +108,7 @@ function TextNode:draw(scene)
        arr[8] = fx;    arr[9] = fy;
        
        
-       local yoff = freetype.h-metrics[n].by;
+       local yoff = self.font.h-metrics[n].by;
        vertexArray[0]=0;
        vertexArray[1]=0;
        
