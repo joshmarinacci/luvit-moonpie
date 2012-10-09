@@ -15,6 +15,8 @@ local pi = require("moonpie")
 local util = require("util")
 require("RectNode")
 require("ImageNode")
+require("TextNode")
+require("GroupNode")
 local EB = require('eventbus').getShared()
 
 Scene = {}
@@ -65,6 +67,12 @@ end
 function Scene.init()
     Scene.projection = Scene.loadOrthoMatrix(0,Scene.window.width,0,Scene.window.height,-1,1)
     Scene.cursor = ImageNode:new{x=0,y=0,width=16,height=16,color={1,1,1},src="cursor.png"}
+    
+    Scene.debugfps = TextNode:new{x=0,y=100,width=200,height=100,color={1,1,1},textstring="0.00"}
+    Scene.debugframetime = TextNode:new{x=0,y=150,width=200,height=100,color={1,1,1},textstring="0.00"}
+    Scene.debuggroup = GroupNode:new{}        
+    Scene.debuggroup:add(Scene.debugfps)
+    Scene.debuggroup:add(Scene.debugframetime)
 end
 
 function Scene.add(node)
@@ -310,6 +318,41 @@ end
 
 
 
+CircularBuffer = {}
+CircularBuffer.len = 10
+CircularBuffer.__index = CircularBuffer
+
+function CircularBuffer:new(len)
+    return setmetatable({nums={},len=len},CircularBuffer)
+end
+
+function CircularBuffer:add(num)
+    table.insert(self.nums,num)
+    if(#self.nums > self.len) then
+        table.remove(self.nums,1)
+    end
+end
+
+function CircularBuffer:avg()
+    local total = 0
+    for n,v in ipairs(self.nums) do
+        total = total + v
+    end
+    return total / #self.nums
+end
+
+Scene.frames = CircularBuffer:new(60)
+Scene.frames2 = CircularBuffer:new(60)
+
+function Scene.updateStats()
+    Scene.debugfps.textstring =
+        string.format("drawing time / frame %.2f msec",
+        (Scene.frames:avg()*1000))
+    Scene.debugframetime.textstring = 
+        string.format("time between frames: %.2f msec",
+        (Scene.frames2:avg()*1000))
+end
+
 function Scene.loop()
     --used only on mac
     Scene.window.keyboardCallback = keyboardCallback
@@ -320,10 +363,13 @@ function Scene.loop()
     for i,n in ipairs(Scene.nodes) do 
         n:init()
     end
-    
+
+    Scene.debuggroup:init()    
     Scene.cursor:init()
     
     while true do
+    
+        local startTime = pi.getTime();
         EB:tick(pi.getTime())
         
         for i,a in ipairs(Scene.anims) do
@@ -347,11 +393,15 @@ function Scene.loop()
         for i,n in ipairs(Scene.nodes) do 
             n:draw(Scene)
         end
+        Scene.debuggroup:draw(Scene)
         Scene.cursor:draw(Scene)
         oldMouse = mouse
         
         
+        Scene.frames:add(pi.getTime()-startTime)
         Scene.window.swap()
+        Scene.frames2:add(pi.getTime()-startTime)
+        Scene.updateStats()
     end
     
 end
