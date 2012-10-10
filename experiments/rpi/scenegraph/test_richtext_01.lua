@@ -260,9 +260,7 @@ EB:on("keypress",function(e)
         local t1 = string.sub(txt,1,n-1)
         local t2 = string.sub(txt,n+1,#txt)
         txt = t1 .. t2
-        print("t1 = ",t1, t2)
         rt.str = txt
-        --sf:setColumn(#t1)
         rt.cursorIndex = rt.cursorIndex - 1
         rt:update()
         return
@@ -271,7 +269,6 @@ EB:on("keypress",function(e)
     if e.keycode == k.RAW_LEFT_ARROW then
         rt.cursorIndex = rt.cursorIndex - 1
         rt:update()
-        --        sf:moveColumn(-1)
         --        if e.shift then
         --            sf:selectionLeft(1)
         --        else
@@ -284,7 +281,6 @@ EB:on("keypress",function(e)
     if e.keycode == k.RAW_RIGHT_ARROW then
         rt.cursorIndex = rt.cursorIndex + 1
         rt:update()
-        --        sf:moveColumn(1)
         --        if e.shift then
         --            sf:selectionRight(1)
         --        else
@@ -296,6 +292,9 @@ EB:on("keypress",function(e)
     if e.keycode == k.RAW_DOWN_ARROW then
         local line,col = rt:indexToLineColumn(rt.cursorIndex)
         line = line + 1
+        if line > #rt.lines then
+            line = #rt.lines
+        end
         local index = rt:lineColumnToIndex(line,col)
         rt.cursorIndex = index
         rt:update()
@@ -334,10 +333,11 @@ EB:on("keypress",function(e)
     --]]
     
     if e.printable then
+        local n = rt.cursorIndex
         local t1 = string.sub(txt,1,n)
         local t2 = string.sub(txt,n+1,#txt)
         txt = t1 .. e.asChar() .. t2
---        sf:moveColumn(1)
+        rt.cursorIndex = rt.cursorIndex + 1
         rt.str = txt
         rt:update()
         return
