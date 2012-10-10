@@ -44,7 +44,8 @@ local view1 = {
         text:draw(scene)
     end,
     measure = function(ch)
-        return text.font.metrics[ch].w
+        local m = text.font.metrics[ch]
+        return m.advance,m.h
     end
 }
 
@@ -55,8 +56,9 @@ local view2 = {
         bold.textstring = str
         bold:draw(scene)
     end,
-    measure = function(str)
-        return text.font.metrics[ch].w
+    measure = function(ch)
+        local m = bold.font.metrics[ch]
+        return m.advance,m.h
     end
 }
 
@@ -74,30 +76,61 @@ function render(lines,scene)
     end
 end
 
+function calcStyle(rt,i) 
+    for j,st in ipairs(rt.styles) do
+        if i >= st.start and i < st.start+st.length then
+            return st.view
+        end
+    end
+    return view1
+end
 
-function layout(str)
+function layout(rt,str, maxlen)
     local lines = {}
-    
-    local maxlen = 200
     local view = view1
     local s = ""
     local len = 0
+    local width = 0
+    local height = 0
+    
+    local line = {segs={}, height=30}
+     
     for i=1, #str, 1 do
         local ch = string.sub(str,i,i)
-        len = len + view.measure(string.byte(ch,1))
+        local v = calcStyle(rt,i)
+                
+        if (v ~= view) then
+            local seg = { style="plain", text=s, view=view, width=width,height=height}
+            table.insert(line.segs,seg)
+            width = 0
+            height = 0
+            view = v
+            s = ""
+        end
+        
+        local w,h = v.measure(string.byte(ch,1))
+        if h > height then
+            height = h
+        end
+        len = len + w
+        width = width + w
         if len < maxlen then
             s = s .. ch
         else
-            local seg = { style="plain", text=s, view=view, width=35, height=30}
-            local line = {segs={seg}, height=30}
+            local seg = { style="plain", text=s, view=v, width=width, height=height}
+            table.insert(line.segs,seg)
+            width = w
+            height = 0
             table.insert(lines,line)
+            line = {segs={},height=30}
             s = ch
             len = 0
-            print("adding line")
         end
     end
-    local seg = { style="plain", text=s, view=view, width=35, height=30}
-    local line = {segs={seg}, height=30}
+    local seg = { style="plain", text=s, view=view, width=width, height=height}
+    table.insert(line.segs,seg)
+    width = 0
+    height = 0
     table.insert(lines,line)
     return lines
 end
@@ -109,14 +142,20 @@ local rt = {
     init = function(self)
         text:init()
         bold:init()
-        self.lines = layout(self.str)
+        self.lines = layout(self,self.str, 300)
     end,
     draw = function(self,scene)
         render(self.lines,scene)
     end,
+    styles={},
 }
 
 rt.str = "This is a long run of text that we have to wrap into multiple lines each with a segment."
+rt.styles[1] = { start=6,  length=3, name="bold", view=view2}
+rt.styles[2] = { start=11,  length=4, name="bold", view=view2}
+rt.styles[3] = { start=40,  length=4, name="bold", view=view2}
+rt.styles[4] = { start=63,  length=5, name="bold", view=view2}
+
 
 scene.add(rt)
 
