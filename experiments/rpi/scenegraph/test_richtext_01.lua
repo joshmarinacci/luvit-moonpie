@@ -65,10 +65,11 @@ local view2 = {
 
 
 function render(lines,scene)
+    local leading = 10
     local y = 0
     for i,line in ipairs(lines) do
         local x = 0
-        y = y + line.height
+        y = y + line.height + leading
         for j,seg in ipairs(line.segs) do
             seg.view.render(seg.text,seg.style,x,y-seg.height)
             x = x + seg.width
@@ -93,17 +94,16 @@ function layout(rt,str, maxlen)
     local width = 0
     local height = 0
     
-    local line = {segs={}, height=30}
+    local line = {segs={}, height=0}
      
     for i=1, #str, 1 do
         local ch = string.sub(str,i,i)
         local v = calcStyle(rt,i)
                 
         if (v ~= view) then
-            local seg = { style="plain", text=s, view=view, width=width,height=height}
+            local seg = { style="plain", text=s, view=view, width=width, height=height}
             table.insert(line.segs,seg)
             width = 0
-            height = 0
             view = v
             s = ""
         end
@@ -120,9 +120,12 @@ function layout(rt,str, maxlen)
             local seg = { style="plain", text=s, view=v, width=width, height=height}
             table.insert(line.segs,seg)
             width = w
+            if height > line.height then
+                line.height = height
+            end
             height = 0
             table.insert(lines,line)
-            line = {segs={},height=30}
+            line = {segs={},height=0}
             s = ch
             len = 0
         end
@@ -130,6 +133,9 @@ function layout(rt,str, maxlen)
     local seg = { style="plain", text=s, view=view, width=width, height=height}
     table.insert(line.segs,seg)
     width = 0
+    if height > line.height then
+        line.height = height
+    end
     height = 0
     table.insert(lines,line)
     return lines
