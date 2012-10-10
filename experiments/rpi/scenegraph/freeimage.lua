@@ -99,4 +99,5 @@ return {
     FT=img,
     loadImage=loadImage,
     FIF_BMP= 0,
+    FIF_PNG= 13,
 }
