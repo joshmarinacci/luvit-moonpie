@@ -68,8 +68,8 @@ function Scene.init()
     Scene.projection = Scene.loadOrthoMatrix(0,Scene.window.width,0,Scene.window.height,-1,1)
     Scene.cursor = ImageNode:new{x=0,y=0,width=16,height=16,color={1,1,1},src="cursor.png"}
     
-    Scene.debugfps = TextNode:new{x=0,y=100,width=200,height=100,color={1,1,1},textstring="0.00"}
-    Scene.debugframetime = TextNode:new{x=0,y=150,width=200,height=100,color={1,1,1},textstring="0.00"}
+    Scene.debugfps =       TextNode:new{x=5,y=300,width=200,height=100,color={1,1,1},textstring="0.00"}
+    Scene.debugframetime = TextNode:new{x=5,y=330,width=200,height=100,color={1,1,1},textstring="0.00"}
     Scene.debuggroup = GroupNode:new{}        
     Scene.debuggroup:add(Scene.debugfps)
     Scene.debuggroup:add(Scene.debugframetime)
