@@ -249,15 +249,15 @@ function keyboardCallback(event)
         return
     end
     
-    if key == k.RAW_BACKSPACE and event.state == 0 then
-        print("we must do a screenshot")
+    if key == k.RAW_BACKSPACE and shiftPressed and event.state == 0 then
+        print("taking a screenshot")
         local w = Scene.window.width
         local h = Scene.window.height
         local pixels = ffi.new("GLubyte["..(3*w*h).."]")
         pi.gles.glReadPixels(0,0,w,h, pi.GL_RGB, pi.GL_UNSIGNED_BYTE, pixels)
         local image = freeimage.FT.FreeImage_ConvertFromRawBits(pixels, w, h, 3 * w, 24, 0x0000FF, 0xFF0000, 0x00FF00, false)
-        freeimage.FT.FreeImage_Save(freeimage.FIF_BMP, image, "foo.bmp", 0);
-
+        freeimage.FT.FreeImage_Save(freeimage.FIF_PNG, image, "screenshot.png", 0);
+        return
     end
     
     local evt = {
