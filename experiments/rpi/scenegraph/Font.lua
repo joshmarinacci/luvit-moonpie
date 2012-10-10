@@ -10,10 +10,10 @@ Font.__index = Font
 function Font:init()
     if(self.inited) then return end
     self.inited = true
-    print("initing a font with name = ", self.name, " size = ",self.size)
+    print("initing a font with name = ", self.name, " size = ",self.size, " and file = ", self.file)
     local R_face = ffi.new("FT_Face[1]")
     --print("created a new font face reference")
-    ret = self.FT.freetype.FT_New_Face(self.FT.ft, "ssp-reg.ttf", 0, R_face)
+    ret = self.FT.freetype.FT_New_Face(self.FT.ft, self.file, 0, R_face)
     if not ret == 0 then
         printf("Could not open the font")
         return 1
@@ -137,8 +137,8 @@ function Font:init()
     
 end
 
-function Font:new(name,size) 
-    return setmetatable({name=name,size=size},Font)
+function Font:new(file,name,size) 
+    return setmetatable({file=file,name=name,size=size},Font)
 end
 
 

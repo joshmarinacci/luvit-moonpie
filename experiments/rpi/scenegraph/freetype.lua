@@ -267,14 +267,19 @@ FT_LOAD_NO_AUTOHINT                  =bit.lshift(1, 15 )
 FT.freetype=freetype
 
 FT.fonts = {}
-FT.fonts['default'] = Font:new("ssp-reg.ttf",20)
+FT.fonts['default'] = Font:new("ssp-reg.ttf","default",20)
 FT.fonts['default'].FT = FT
-FT.fonts['bold'] = Font:new("ssp-reg.ttf",30)
+FT.fonts['bold'] = Font:new("ssp-reg.ttf","bold",30)
 FT.fonts['bold'].FT = FT
 
 
 FT.getFont = function(name,size)
     return FT.fonts[name]
+end
+FT.loadFont = function(file,name,size)
+    local fnt = Font:new(file,name,size)
+    fnt.FT = FT
+    return fnt
 end
 return FT
 
