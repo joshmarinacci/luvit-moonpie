@@ -225,6 +225,8 @@ for i=32,64,1 do --space, symbols, numbers
 end
 km2[285] = k.RAW_LEFT_ARROW
 km2[286] = k.RAW_RIGHT_ARROW
+km2[284] = k.RAW_DOWN_ARROW
+km2[283] = k.RAW_UP_ARROW
 
 km2[287] = k.RAW_LEFT_SHIFT
 km2[288] = k.RAW_RIGHT_SHIFT
