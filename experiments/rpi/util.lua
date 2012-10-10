@@ -63,7 +63,7 @@ function buildShaderProgram(vshader_source, fshader_source)
     showProgramLog(prog);
     pi.gles.glUseProgram( prog )
     checkError()
-    print("built the shader program")
+    --print("built the shader program")
     return prog
 end
 

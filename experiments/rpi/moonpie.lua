@@ -200,7 +200,7 @@ local function validate_shader(shader)
         print("everything is fine")
         return
     end
-    print("there is an error")
+    --print("there is an error")
     pi.gles.glGetShaderiv(shader, pi.GL_INFO_LOG_LENGTH, int)
     local length = int[0]
     if(length > 1) then
@@ -223,7 +223,6 @@ local function load_shader(src, type)
     pi.gles.glCompileShader(shader);
     
     validate_shader(shader)
-    print("loaded a shader");
     return shader
 end
 

@@ -130,7 +130,6 @@ function imageInit()
     )
     ImageNode.image = freeimage.loadImage("earth.jpeg")
     ImageNode.texId = util.uploadImageAsTexture(ImageNode.image)
-    print("image loaded: ", ImageNode.image.width, ImageNode.image.height)
 end
 
 --[[
