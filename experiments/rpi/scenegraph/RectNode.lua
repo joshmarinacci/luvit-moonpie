@@ -25,6 +25,7 @@ function RectNode.loadShader()
     local vshader_source = [[
     attribute vec4 Position;
     uniform mat4 projection;
+    uniform mat4 modelview;
     uniform vec2 xy;
     
     mat4 translate(float x, float y, float z)
@@ -39,7 +40,7 @@ function RectNode.loadShader()
     
     void main()
     {
-        gl_Position = translate(xy.x,xy.y,0.0) * Position *  projection;
+        gl_Position = translate(xy.x,xy.y,0.0) * Position * modelview * projection;
     }
     ]]
     local fshader_source = [[
@@ -55,6 +56,7 @@ function RectNode.loadShader()
     
     RectNode.shader = util.buildShaderProgram(vshader_source, fshader_source)
     RectNode.projectionSlot = pi.gles.glGetUniformLocation(RectNode.shader,"projection");
+    RectNode.modelviewSlot  = pi.gles.glGetUniformLocation(RectNode.shader,"modelview");
     RectNode.positionSlot   = pi.gles.glGetAttribLocation(RectNode.shader,"Position");
     RectNode.colorSlot      = pi.gles.glGetUniformLocation(RectNode.shader,"color");
     RectNode.xySlot         = pi.gles.glGetUniformLocation(RectNode.shader,"xy");
@@ -84,7 +86,8 @@ end
 
 function RectNode:draw(scene)
     pi.gles.glUseProgram( RectNode.shader )
-    pi.gles.glUniformMatrix4fv(RectNode.projectionSlot, 1, pi.GL_FALSE, scene.projection )   
+    pi.gles.glUniformMatrix4fv(RectNode.projectionSlot, 1, pi.GL_FALSE, scene.projection )
+    pi.gles.glUniformMatrix4fv(RectNode.modelviewSlot,  1, pi.GL_FALSE, scene.modelview )   
     pi.gles.glUniform3f(RectNode.colorSlot, self.color[1], self.color[2], self.color[3])
     pi.gles.glUniform2f(RectNode.xySlot, self.x, self.y)
     pi.gles.glVertexAttribPointer(RectNode.positionSlot, 3, pi.GL_FLOAT, pi.GL_FALSE, 0, self.vertexArray )

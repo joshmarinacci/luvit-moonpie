@@ -58,6 +58,18 @@ end
 Scene.loadOrthoMatrix = loadOrthoMatrix
 
 
+function Scene.loadIdentityMatrix() 
+    local matrix = ffi.new("GLfloat[16]");
+    for i=0,15,1 do
+        matrix[i] = 0.0;
+    end
+    matrix[0] = 1.0;
+    matrix[5] = 1.0;
+    matrix[10] = 1.0;
+    matrix[15] = 1.0;
+    return matrix;
+end
+
 function Scene.clear()
    pi.gles.glViewport(0,0,Scene.window.width, Scene.window.height)
    pi.gles.glClearColor(0.5,0.5,0.5,1)
@@ -65,7 +77,9 @@ function Scene.clear()
 end
 
 function Scene.init()
+    Scene.matrix = {}
     Scene.projection = Scene.loadOrthoMatrix(0,Scene.window.width,0,Scene.window.height,-1,1)
+    Scene.modelview = Scene.loadIdentityMatrix()
     Scene.cursor = ImageNode:new{x=0,y=0,width=16,height=16,color={1,1,1},src="cursor.png"}
     
     Scene.debugfps =       TextNode:new{x=5,y=300,width=200,height=100,color={1,1,1},textstring="0.00"}
@@ -73,6 +87,21 @@ function Scene.init()
     Scene.debuggroup = GroupNode:new{}        
     Scene.debuggroup:add(Scene.debugfps)
     Scene.debuggroup:add(Scene.debugframetime)
+end
+
+function Scene.pushMatrix()
+    table.insert(Scene.matrix,Scene.loadIdentityMatrix())
+    --last element
+    Scene.modelview = Scene.matrix[#Scene.matrix]
+end
+function Scene.translate(x,y)
+    Scene.modelview[12]=x;
+    Scene.modelview[13]=y;
+end
+function Scene.popMatrix()
+    --pop off the last element
+    Scene.modelview = table.remove(Scene.matrix,#Scene.matrix)
+--    Scene.modelview = Scene.loadIdentityMatrix()
 end
 
 function Scene.add(node)
