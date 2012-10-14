@@ -3,6 +3,7 @@
 GroupNode = {}
 GroupNode.x = 0
 GroupNode.y = 0
+GroupNode.visible = true
 GroupNode.children = {}
 
 function GroupNode:init()
@@ -16,6 +17,7 @@ function GroupNode:add(node)
 end
 
 function GroupNode:draw(scene)
+    if(not self.visible) then return end
     scene.pushMatrix();
     scene.translate(self.x,self.y);
     for i,v in ipairs(self.children) do
