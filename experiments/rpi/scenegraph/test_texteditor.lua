@@ -29,7 +29,7 @@ scene.add(italic_button)
 local text_editor = RichTextNode:new{x=5,y=50, width=200, height=400}
 scene.add(text_editor)
 
-text_editor.str = "This is a long run of text that we have to wrap into multiple lines each with a segment."
+text_editor.str = "This is a long\n run of text that we have to wrap into multiple lines each with a segment."
 --text_editor.styles[1] = { start=6,  length=3, name="bold", view=view2}
 --rt.styles[2] = { start=11,  length=4, name="bold", view=view2}
 --rt.styles[3] = { start=40,  length=4, name="bold", view=view2}

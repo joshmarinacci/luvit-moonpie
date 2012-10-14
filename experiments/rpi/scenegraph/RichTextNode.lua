@@ -75,27 +75,30 @@ function layout(rt,str, maxlen)
             s = ""
         end
         
-        local w,h = v.measure(string.byte(ch,1))
-        if h > height then
-            height = h
-        end
-        len = len + w
-        width = width + w
-        if len < maxlen then
-            s = s .. ch
-        else
-            local seg = { style="plain", text=s, view=v, width=width, height=height}
-            table.insert(line.segs,seg)
-            width = w
-            if height > line.height then
-                line.height = height
-            end
+        if(ch == '\n') then
+            chopLine(width, height, s, line, i, lines, v)
+            s = ""
+            width = 0
             height = 0
-            line.endIndex = i
-            table.insert(lines,line)
-            line = {segs={},height=0,startIndex=i}
-            s = ch
+            line = {segs={},height=0,startIndex=i+1}
             len = 0
+        else 
+            local w,h = v.measure(string.byte(ch,1))
+            if h > height then
+                height = h
+            end
+            len = len + w
+            width = width + w
+            if len < maxlen then
+                s = s .. ch
+            else
+                chopLine(width, height, s, line, i, lines, v)
+                width = w
+                height = 0
+                line = {segs={},height=0,startIndex=i}
+                s = ch
+                len = 0
+            end
         end
     end
     local seg = { style="plain", text=s, view=view, width=width, height=height}
@@ -110,6 +113,15 @@ function layout(rt,str, maxlen)
     return lines
 end
 
+function chopLine(width, height, s, line, i, lines, v)
+    local seg = { style="plain", text=s, view=v, width=width, height=height}
+    table.insert(line.segs,seg)
+    if height > line.height then
+        line.height = height
+    end
+    line.endIndex = i
+    table.insert(lines,line)
+end
 
 function RichTextNode:render(lines,scene)
     local y = 0
