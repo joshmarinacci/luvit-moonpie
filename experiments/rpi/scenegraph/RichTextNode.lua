@@ -125,7 +125,7 @@ end
 
 
 function RichTextNode:init()
-    self.bg = RectNode:new{x=self.x, y=self.y, width=500-20, height=40, color={1,1,1}}
+    self.bg = RectNode:new{x=self.x, y=self.y, width=self.width, height=self.height, color={1,1,1}}
     self.cursor = RectNode:new{x=0, y=4, width=2, height=30, color={1,0,0}}
     text:init()
     bold:init()
@@ -138,7 +138,8 @@ function RichTextNode:init()
     for i,line in ipairs(self.lines) do
         y = y + line.height + leading
     end
-    self.bg.height=y+leading
+--    self.bg.height=y+leading
+    self.bg.height = self.height
     self.bg:update()
     
 
