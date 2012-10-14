@@ -120,10 +120,9 @@ int printf(const char *fmt, ...);
 ]]
 
 
-pi.glfw = ffi.load("/Users/josh/projects/lua/glfw-2.7.6/lib/cocoa/libglfw.dylib");
+pi.glfw = ffi.load("/usr/local/Cellar/glfw/2.7.6/lib/libglfw.dylib");
 pi.gles = ffi.load("/System/Library/Frameworks/OpenGL.framework/Libraries/libGL.dylib")
 
-print("gles set", pi.gles);
 
 GLFW_WINDOW      = 0x00010001;
 pi.GLFW_STICKY_KEYS = 0x00030002

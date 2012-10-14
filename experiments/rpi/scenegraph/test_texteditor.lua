@@ -14,8 +14,8 @@ require("RichTextNode")
 
 
 -- background of the text editor
-local bg = RectNode:new{ x=0,y=0,width=1024,height=600, color={1,1,1}}
---scene.add(bg)
+local bg = RectNode:new{ x=0,y=0,width=1024,height=600, color={0,0.5,0}}
+scene.add(bg)
 
 -- butons
 local save_button = ButtonNode:new{x=5, y=5, text="save"}
@@ -36,6 +36,7 @@ text_editor.str = "This is a long run of text that we have to wrap into multiple
 --rt.styles[4] = { start=63,  length=5, name="bold", view=view2}
 
 
+--[[
 -- dialog background
 local dialog = GroupNode:new{x=100, y=100}
 local dialog_bg = RectNode:new { x=0, y=0, width=600, height=400, color={1.0,0.5,0.5}}
@@ -51,6 +52,6 @@ EB:on("action",function()
     print("action happened. close button?")
     dialog.visible = false
 end)
-
+--]]
 
 scene.loop()

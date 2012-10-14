@@ -125,7 +125,7 @@ end
 
 
 function RichTextNode:init()
-    self.bg = RectNode:new{x=self.x, y=self.y, width=self.width, height=self.height, color={1,1,1}}
+    self.bg = RectNode:new{x=self.x, y=self.y, width=self.width, height=self.height, color={0.8,0.8,0.8}}
     self.cursor = RectNode:new{x=0, y=4, width=2, height=30, color={1,0,0}}
     text:init()
     bold:init()
