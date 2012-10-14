@@ -33,7 +33,13 @@ function ButtonNode:init()
     self.text:init()
     
     EB:on("mousepress",function(e)
-        if(self:contains(e)) then
+        local p = {x=e.x,y=e.y}
+        if(self.parent ~= nil) then
+            p.x = p.x - self.parent.x
+            p.y = p.y - self.parent.y
+        end
+        
+        if(self:contains(p)) then
             self.pressed = true
             self.selected = not self.selected
             EB:fire("action",{kind="action",target=self})

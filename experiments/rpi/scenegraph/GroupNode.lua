@@ -14,6 +14,7 @@ end
 
 function GroupNode:add(node)
     table.insert(self.children,node)
+    node.parent = self
 end
 
 function GroupNode:draw(scene)
