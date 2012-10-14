@@ -95,8 +95,8 @@ function Scene.pushMatrix()
     Scene.modelview = Scene.matrix[#Scene.matrix]
 end
 function Scene.translate(x,y)
-    Scene.modelview[12]=x;
-    Scene.modelview[13]=y;
+    Scene.modelview[3]=x;
+    Scene.modelview[7]=y;
 end
 function Scene.popMatrix()
     --pop off the last element
