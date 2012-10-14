@@ -29,6 +29,7 @@ function TextNode.loadShader()
     attribute vec4 Position;
     attribute vec2 TextureCoords;
     uniform mat4 projection;
+    uniform mat4 modelview;
     uniform vec2 xy;
     varying vec2 uv;
     mat4 translate(float x, float y, float z)
@@ -42,7 +43,7 @@ function TextNode.loadShader()
     }
     void main()
     {
-        gl_Position = translate(xy.x,xy.y,0.0) * Position *  projection ; 
+        gl_Position = translate(xy.x,xy.y,0.0) * Position * modelview * projection ; 
         uv = TextureCoords;
     }
     ]]
@@ -62,6 +63,7 @@ function TextNode.loadShader()
     TextNode.shader = util.buildShaderProgram(vshader_source, fshader_source)
     print("the shader id = ",TextNode.shader)
     TextNode.projectionSlot = pi.gles.glGetUniformLocation(TextNode.shader,"projection");
+    TextNode.modelviewSlot  = pi.gles.glGetUniformLocation(TextNode.shader,"modelview");
     TextNode.texSlot        = pi.gles.glGetUniformLocation(TextNode.shader,"tex");
     TextNode.positionSlot   = pi.gles.glGetAttribLocation(TextNode.shader,"Position");
     pi.gles.glEnableVertexAttribArray(TextNode.positionSlot)
@@ -126,6 +128,7 @@ function TextNode:draw(scene)
        
        pi.gles.glUniform2f(TextNode.xySlot, xoff+self.x,self.y+yoff)
        pi.gles.glUniformMatrix4fv(TextNode.projectionSlot,  1, pi.GL_FALSE, scene.projection )
+       pi.gles.glUniformMatrix4fv(TextNode.modelviewSlot,   1, pi.GL_FALSE, scene.modelview )
        pi.gles.glUniform3f(TextNode.colorSlot, self.color[1], self.color[2], self.color[3])
        pi.gles.glVertexAttribPointer(TextNode.positionSlot, 3, pi.GL_FLOAT, pi.GL_FALSE, 0, vertexArray )
        pi.gles.glVertexAttribPointer(TextNode.coordSlot,    2, pi.GL_FLOAT, pi.GL_FALSE, 0, arr )

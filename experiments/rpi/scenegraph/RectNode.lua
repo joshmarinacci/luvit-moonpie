@@ -77,6 +77,17 @@ function RectNode:init()
     )
 end
 
+function printMatrix(mat) 
+    for j=0,3,1 do
+        local str = "";
+        for i=0,3,1 do
+            str = str .. " " .. mat[j*4+i]
+        end
+        print(str)
+    end
+    print("---")
+
+end
 function RectNode:update()
     self.vertexArray[4]=self.height
     self.vertexArray[7]=self.height
@@ -87,6 +98,7 @@ end
 function RectNode:draw(scene)
     pi.gles.glUseProgram( RectNode.shader )
     pi.gles.glUniformMatrix4fv(RectNode.projectionSlot, 1, pi.GL_FALSE, scene.projection )
+--    printMatrix(scene.modelview);
     pi.gles.glUniformMatrix4fv(RectNode.modelviewSlot,  1, pi.GL_FALSE, scene.modelview )   
     pi.gles.glUniform3f(RectNode.colorSlot, self.color[1], self.color[2], self.color[3])
     pi.gles.glUniform2f(RectNode.xySlot, self.x, self.y)

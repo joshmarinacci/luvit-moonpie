@@ -27,9 +27,9 @@ function ButtonNode:contains(p)
     return false
 end
 function ButtonNode:init()
-    self.bg = RectNode:new{x=0,y=0,width=200,height=40,color={0,1,0}}
+    self.bg = RectNode:new{x=self.x,y=self.y,width=200,height=40,color={0,1,0}}
     self.bg:init()
-    self.text = TextNode:new{x=10,y=0,color={0,0,0}, textstring=self.text}
+    self.text = TextNode:new{x=10+self.x,y=self.y,color={0,0,0}, textstring=self.text}
     self.text:init()
     
     EB:on("mousepress",function(e)
