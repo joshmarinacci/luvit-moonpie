@@ -26,7 +26,7 @@ local italic_button = ButtonNode:new{x=425, y=5, text="italic"}
 scene.add(italic_button)
 
 -- text editor
-local text_editor = RichTextNode:new{x=5,y=50, width=1000, height=400}
+local text_editor = RichTextNode:new{x=5,y=50, width=200, height=400}
 scene.add(text_editor)
 
 text_editor.str = "This is a long run of text that we have to wrap into multiple lines each with a segment."

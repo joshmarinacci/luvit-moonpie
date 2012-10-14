@@ -41,6 +41,7 @@ RichTextNode = {
     cursorIndex=0,
     str="",
     styles={},
+    leading = 10,
 }
 
 function calcStyle(rt,i) 
@@ -111,11 +112,10 @@ end
 
 
 function RichTextNode:render(lines,scene)
-    local leading = 10
     local y = 0
     for i,line in ipairs(lines) do
         local x = 0
-        y = y + line.height + leading
+        y = y + line.height + self.leading
         for j,seg in ipairs(line.segs) do
             seg.view.render(seg.text,seg.style,x+self.x,y-seg.height+self.y,scene)
             x = x + seg.width
@@ -133,10 +133,9 @@ function RichTextNode:init()
     self.cursor:init()
     self.lines = layout(self,self.str, self.width)
     self.bg.width=self.width
-    local leading = 10
     local y = 0
     for i,line in ipairs(self.lines) do
-        y = y + line.height + leading
+        y = y + line.height + self.leading
     end
 --    self.bg.height=y+leading
     self.bg.height = self.height
@@ -156,11 +155,21 @@ function RichTextNode:draw(scene)
 end
 
 function RichTextNode:update()
+    if(self.cursorIndex < 1) then
+        self.cursorIndex = 1
+    end
+    if(self.cursorIndex > #self.str) then
+        self.cursorIndex = #self.str
+    end
+
     self.lines = layout(self,self.str,self.width)
-    print("cursor index = ",self.cursorIndex)
+    local n = self.cursorIndex;
+    local txt = self.str
+    print("n = ", n)
+    print("len = ", string.sub(txt,n,n))
     local line,col = self.indexToLineColumn(self,self.cursorIndex)
     print("line,col = ",line,col)
-    local x,y = self.lineColumnToXY(self,line,col)
+    local x,y = self.lineColumnToXY(self,line,col+1)
     print("x,y = ",x,y)
     self.cursor.x = x+self.x
     self.cursor.y = y+self.y
@@ -178,14 +187,17 @@ end
 function RichTextNode:lineColumnToIndex(li,col)
     local n = 1
     for i,line in ipairs(self.lines) do
+        print("looking at line ",i)
         if i == li then
+            print("returning n",n)
             return n + col
         end
-        n = n + line.endIndex
+        n = line.endIndex
     end
     return 0
 end
-    
+   
+
 function RichTextNode:lineColumnToXY(l,c)
     -- for each line
     local y = 0
@@ -210,6 +222,7 @@ function RichTextNode:lineColumnToXY(l,c)
                 end
             end
         end
+        y = y + self.leading
     end
     return 0,0
 end
@@ -271,24 +284,26 @@ function RichTextNode:keypressHandler(e)
     if e.keycode == k.RAW_DOWN_ARROW then
         local line,col = self:indexToLineColumn(self.cursorIndex)
         line = line + 1
-        if line > #rt.lines then
-            line = #rt.lines
+        if line > #self.lines then
+            line = #self.lines
         end
+        print("calling line column to index with ", line, col)
         local index = self:lineColumnToIndex(line,col)
-        rt.cursorIndex = index
-        rt:update()
+        print("got back", index)
+        self.cursorIndex = index
+        self:update()
         return
     end
     
     if e.keycode == k.RAW_UP_ARROW then
-        local line,col = rt:indexToLineColumn(rt.cursorIndex)
+        local line,col = self:indexToLineColumn(self.cursorIndex)
         line = line - 1
         if line < 1 then
             line = 1
         end
-        local index = rt:lineColumnToIndex(line,col)
-        rt.cursorIndex = index
-        rt:update()
+        local index = self:lineColumnToIndex(line,col)
+        self.cursorIndex = index
+        self:update()
         return
     end
     
