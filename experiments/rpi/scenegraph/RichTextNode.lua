@@ -42,12 +42,16 @@ RichTextNode = {
     str="",
     styles={},
     leading = 10,
+    stylemap = {
+        text=view1,
+        bold=view2
+    },
 }
 
 function calcStyle(rt,i) 
     for j,st in ipairs(rt.styles) do
         if i >= st.start and i < st.start+st.length then
-            return st.view
+            return rt.stylemap[st.name]
         end
     end
     return view1
@@ -281,6 +285,12 @@ function RichTextNode:keypressHandler(e)
         txt = t1 .. t2
         self.str = txt
         self.cursorIndex = self.cursorIndex - 1
+        --adjust style positions
+        for i,style in ipairs(self.styles) do
+            if(style.start >= n) then
+                style.start = style.start - 1
+            end
+        end
         self:update()
         return
     end
@@ -359,6 +369,12 @@ function RichTextNode:keypressHandler(e)
         local t1 = string.sub(txt,1,n)
         local t2 = string.sub(txt,n+1,#txt)
         txt = t1 .. e.asChar() .. t2
+        -- adjust style positions
+        for i,style in ipairs(self.styles) do
+            if(style.start >= n) then
+                style.start = style.start + 1
+            end
+        end
         self.cursorIndex = self.cursorIndex + 1
         self.str = txt
         self:update()
