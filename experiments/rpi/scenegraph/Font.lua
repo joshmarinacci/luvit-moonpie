@@ -33,7 +33,7 @@ function Font:init()
 --    print("max_advance_height = ",face.max_advance_height/64)
 --    print("size = ",face.size)
     
-    ret = self.FT.freetype.FT_Set_Char_Size(face, 0, 16*64, 72, 72);
+    ret = self.FT.freetype.FT_Set_Char_Size(face, 0, self.size*64, 72, 72);
     if not ret == 0 then
         printf("error setting the char size")
         return 1

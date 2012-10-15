@@ -3,8 +3,8 @@ FT = require("freetype")
 local k = require("keyboard_constants")
 
 
-local plain_font = FT.loadFont("ssp-reg.ttf","default",20)
-local bold_font = FT.loadFont("ssp-bold.ttf","default",20)
+local plain_font = FT.loadFont("ssp-reg.ttf","default",18)
+local bold_font = FT.loadFont("ssp-bold.ttf","default",18)
 local text = TextNode:new{x=270, y=550, textstring="list", color={0,0,0}, font=plain_font}
 local bold = TextNode:new{x=270, y=550, textstring="list", color={0,0,0}, font=bold_font}
 local view1 = {
