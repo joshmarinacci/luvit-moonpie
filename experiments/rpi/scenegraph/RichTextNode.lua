@@ -63,7 +63,9 @@ function layout(rt,str, maxlen)
     
     local line = {segs={}, height=0, startIndex=1}
      
-    for i=1, #str, 1 do
+    local word = ""
+    local i = 1
+    while true do
         local ch = string.sub(str,i,i)
         local v = calcStyle(rt,i)
                 
@@ -83,6 +85,11 @@ function layout(rt,str, maxlen)
             line = {segs={},height=0,startIndex=i+1}
             len = 0
         else 
+            if ch == ' ' then
+                word = ""
+            else
+                word = word .. ch
+            end
             local w,h = v.measure(string.byte(ch,1))
             if h > height then
                 height = h
@@ -92,6 +99,11 @@ function layout(rt,str, maxlen)
             if len < maxlen then
                 s = s .. ch
             else
+                --back up to end of previous word
+                ch = string.sub(s,#s-#word+1,#s-#word+1)
+                s = string.sub(s,1,#s-#word)
+                i = i - #word
+                word = ""
                 chopLine(width, height, s, line, i, lines, v)
                 width = w
                 height = 0
@@ -100,7 +112,10 @@ function layout(rt,str, maxlen)
                 len = 0
             end
         end
+        i = i + 1
+        if i > #str then break end
     end
+    
     local seg = { style="plain", text=s, view=view, width=width, height=height}
     table.insert(line.segs,seg)
     width = 0
