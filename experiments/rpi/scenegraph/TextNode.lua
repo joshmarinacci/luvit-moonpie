@@ -95,7 +95,7 @@ function TextNode:draw(scene)
    local h = self.font.h
    for i=1, #self.textstring, 1 do
        local n = string.byte(self.textstring,i)
-       local fx = metrics[n].x/w
+       local fx = metrics[n].x/w 
        local fo = metrics[n].w/w
        local fh = metrics[n].h/h
        local size_w = metrics[n].w
@@ -111,19 +111,19 @@ function TextNode:draw(scene)
        
        
        local yoff = self.font.h-metrics[n].by;
-       vertexArray[0]=0;
+       vertexArray[0]=0  + metrics[n].adjx;
        vertexArray[1]=0;
        
-       vertexArray[3]=0;
+       vertexArray[3]=0 + metrics[n].adjx;
        vertexArray[4]=size_h; 
        
-       vertexArray[6]=size_w;       
+       vertexArray[6]=size_w + metrics[n].adjx;       
        vertexArray[7]=size_h; 
 
-       vertexArray[9]=size_w;
+       vertexArray[9]=size_w + metrics[n].adjx;
        vertexArray[10]=0;
        
-       vertexArray[12]=0;
+       vertexArray[12]=0 + metrics[n].adjx;
        vertexArray[13]=0;
        
        pi.gles.glUniform2f(TextNode.xySlot, xoff+self.x,self.y+yoff)

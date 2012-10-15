@@ -126,13 +126,18 @@ function Font:init()
             g.bitmap.buffer
         )
         checkError()
+--        print("i = ",i)
+--        print("advance of is. w=",g.bitmap.width, "m.hb.x",g.metrics.horiBearingX,"m.hA",g.metrics.horiAdvance,"linha",g.linearHoriAdvance, "adv",g.advance.x)
+--        print("lsbdelta",g.lsb_delta,"rsbdelta=",g.rsb_delta)
+--        print("bm left = ",g.bitmap_left,"bm top =",g.bitmap_top)
         metrics[i] = {
             x=x,
             w=g.bitmap.width,
             h=g.bitmap.rows,
             bx=g.metrics.horiBearingX/64,
             by=g.metrics.horiBearingY/64,
-            advance=g.metrics.horiAdvance/64,
+            advance=g.advance.x/64,
+            adjx=g.bitmap_left,
         }
         x = x + g.bitmap.width
     end
