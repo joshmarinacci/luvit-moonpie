@@ -28,12 +28,19 @@ function Font:init()
 --    print("num glyphs = ",face.num_glyphs)
 --    print("family name = ",face.family_name)
 --    print("style name = ",face.style_name)
---    print("height = ",face.height)
---    print("max_advance_width = ",face.max_advance_width)
---    print("max_advance_height = ",face.max_advance_height)
+--    print("height = ",face.height/64)
+--    print("max_advance_width = ",face.max_advance_width/64)
+--    print("max_advance_height = ",face.max_advance_height/64)
 --    print("size = ",face.size)
     
-    self.FT.freetype.FT_Set_Pixel_Sizes(face,0,self.size)
+    ret = self.FT.freetype.FT_Set_Char_Size(face, 0, 16*64, 72, 72);
+    if not ret == 0 then
+        printf("error setting the char size")
+        return 1
+    end
+    
+    --self.FT.freetype.FT_Set_Pixel_Sizes(face,0,self.size)
+    -- 97 is the letter a
     ret = self.FT.freetype.FT_Load_Char(face, 97, self.FT.FT_LOAD_RENDER)
     if not ret == 0 then
         print("could not load character 'a'")

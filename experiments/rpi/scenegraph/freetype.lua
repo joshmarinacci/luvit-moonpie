@@ -223,6 +223,15 @@ ffi.cdef[[
     FT_Slot_Internal  internal;
 
   } FT_GlyphSlotRec;
+  
+  
+  typedef signed long  FT_F26Dot6;
+  FT_Error FT_Set_Char_Size(FT_Face face,
+    FT_F26Dot6 char_width,
+    FT_F26Dot6 char_height,
+    FT_UInt horiz_resolution,
+    FT_UInt vert_resolution
+    );
 ]]
 
 local freetype = ffi.load("freetype")
@@ -267,9 +276,9 @@ FT_LOAD_NO_AUTOHINT                  =bit.lshift(1, 15 )
 FT.freetype=freetype
 
 FT.fonts = {}
-FT.fonts['default'] = Font:new("ssp-reg.ttf","default",20)
+FT.fonts['default'] = Font:new("ssp-reg.ttf","default",18)
 FT.fonts['default'].FT = FT
-FT.fonts['bold'] = Font:new("ssp-reg.ttf","bold",30)
+FT.fonts['bold'] = Font:new("ssp-reg.ttf","bold",18)
 FT.fonts['bold'].FT = FT
 
 
