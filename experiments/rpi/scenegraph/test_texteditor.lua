@@ -26,10 +26,10 @@ local italic_button = ButtonNode:new{x=425, y=5, text="italic"}
 scene.add(italic_button)
 
 -- text editor
-local text_editor = RichTextNode:new{x=5,y=50, width=200, height=400}
+local text_editor = RichTextNode:new{x=5,y=50, width=120, height=400}
 scene.add(text_editor)
 
-text_editor.str = "This is a long\n run of text that we have to wrap into multiple lines each with a segment."
+text_editor.str = "1234\n56789 123456789 123456789 123456789"
 table.insert(text_editor.styles, {start=6,length=3,name="bold"})
 --text_editor.styles[1] = { start=6,  length=3, name="bold", view=view2}
 --rt.styles[2] = { start=11,  length=4, name="bold", view=view2}

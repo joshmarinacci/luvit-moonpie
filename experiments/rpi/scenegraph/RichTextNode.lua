@@ -82,7 +82,7 @@ function layout(rt,str, maxlen)
         end
         
         if(ch == '\n') then
-            chopLine(width, height, s, line, i, lines, v)
+            chopLine(width, height, s, line, i-1, lines, v)
             s = ""
             width = 0
             height = 0
@@ -103,16 +103,17 @@ function layout(rt,str, maxlen)
             if len < maxlen then
                 s = s .. ch
             else
-                --back up to end of previous word
+                --back up to end of previous word plus the sapce
                 ch = string.sub(s,#s-#word+1,#s-#word+1)
                 s = string.sub(s,1,#s-#word)
-                i = i - #word
+                i = i - #word -1
                 word = ""
                 chopLine(width, height, s, line, i, lines, v)
                 width = w
                 height = 0
-                line = {segs={},height=0,startIndex=i}
-                s = ch
+                line = {segs={},height=0,startIndex=i+2} -- add extra +1 to skip the space
+                s = ""
+                i = i + 1
                 len = 0
             end
         end
@@ -156,6 +157,7 @@ end
 
 
 function RichTextNode:init()
+    self.cursorIndex = 1
     self.bg = RectNode:new{x=self.x, y=self.y, width=self.width, height=self.height, color={1.0,1.0,1.0}}
     self.cursor = RectNode:new{x=0, y=4, width=1, height=20, color={1,0,0}}
     text:init()
@@ -168,7 +170,6 @@ function RichTextNode:init()
     for i,line in ipairs(self.lines) do
         y = y + line.height + self.leading
     end
---    self.bg.height=y+leading
     self.bg.height = self.height
     self.bg:update()
     
@@ -196,20 +197,31 @@ function RichTextNode:update()
     self.lines = layout(self,self.str,self.width)
     local n = self.cursorIndex;
     local txt = self.str
-    print("n = ", n)
-    print("len = ", string.sub(txt,n,n))
     local line,col = self.indexToLineColumn(self,self.cursorIndex)
-    print("line,col = ",line,col)
-    local x,y = self.lineColumnToXY(self,line,col+1)
-    print("x,y = ",x,y)
+    local x,y = self.lineColumnToXY(self,line,col)
     self.cursor.x = x+self.x
     self.cursor.y = y+self.y
+    --self:dumpLayout()
+end
+
+function RichTextNode:dumpLayout()
+    print("--- layout")
+    for i,l in ipairs(self.lines) do
+        print("   line ",i,l.startIndex,l.endIndex, "-"..string.sub(self.str,l.startIndex,l.endIndex).."-")
+        for j,s in ipairs(l.segs) do
+            print("      seg ",j,"-"..s.text.."-")
+        end
+    end
+    print("   index = ",self.cursorIndex)
 end
     
 function RichTextNode:indexToLineColumn(n)
     for i,line in ipairs(self.lines) do
-        if n >= line.startIndex and n < line.endIndex then
+        if n >= line.startIndex and n <= line.endIndex then
             return i,n-line.startIndex
+        end
+        if n < line.startIndex then
+            return i,1
         end
     end
     return 1,1
@@ -218,9 +230,7 @@ end
 function RichTextNode:lineColumnToIndex(li,col)
     local n = 1
     for i,line in ipairs(self.lines) do
-        print("looking at line ",i)
         if i == li then
-            print("returning n",n)
             return n + col
         end
         n = line.endIndex
@@ -246,7 +256,7 @@ function RichTextNode:lineColumnToXY(l,c)
                     local ch = string.sub(seg.text,n3,n3)
                     local w,h = seg.view.measure(string.byte(ch,1))
                     x = x + w
-                    if i == c then
+                    if i > c then
                         return x,y
                     end
                     i = i + 1
@@ -297,24 +307,27 @@ function RichTextNode:keypressHandler(e)
     
     if e.keycode == k.RAW_LEFT_ARROW then
         self.cursorIndex = self.cursorIndex - 1
+        if(self.cursorIndex < 1) then
+            self.cursorIndex = 1
+        end
+        local l,c = self:indexToLineColumn(self.cursorIndex)
+        -- if we are stuck between lines, move up to end of previous line
+        if(self.cursorIndex < self.lines[l].startIndex) then
+            l = l -1
+            self.cursorIndex = self.lines[l].endIndex
+        end
         self:update()
-        --        if e.shift then
-        --            sf:selectionLeft(1)
-        --        else
-        --            sf.selection = nil
-        --        end
         return
     end
     
-    
     if e.keycode == k.RAW_RIGHT_ARROW then
         self.cursorIndex = self.cursorIndex + 1
+        local l,c = self:indexToLineColumn(self.cursorIndex)
+        -- if we are stuck between lines, move to the start of current line
+        if(self.cursorIndex < self.lines[l].startIndex) then
+            self.cursorIndex = self.lines[l].startIndex
+        end
         self:update()
-        --        if e.shift then
-        --            sf:selectionRight(1)
-        --        else
-        --            sf.selection = nil
-        --        end
         return
     end
     
@@ -324,9 +337,7 @@ function RichTextNode:keypressHandler(e)
         if line > #self.lines then
             line = #self.lines
         end
-        print("calling line column to index with ", line, col)
         local index = self:lineColumnToIndex(line,col)
-        print("got back", index)
         self.cursorIndex = index
         self:update()
         return
