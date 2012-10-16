@@ -301,7 +301,12 @@ function RichTextNode:keypressHandler(e)
         self.cursorIndex = self.cursorIndex - 1
         --adjust style positions
         for i,style in ipairs(self.styles) do
-            if(style.start >= n) then
+            -- inside
+            if(style.start <= n and n < style.start + style.length) then
+                style.length = style.length -1
+            end
+            -- after
+            if(n < style.start) then
                 style.start = style.start - 1
             end
         end
@@ -386,8 +391,14 @@ function RichTextNode:keypressHandler(e)
         txt = t1 .. e.asChar() .. t2
         -- adjust style positions
         for i,style in ipairs(self.styles) do
-            if(style.start >= n) then
+            --before
+            if(n < style.start) then
                 style.start = style.start + 1
+            end
+            --inside
+            if(style.start <= n and n < style.start + style.length) then
+                print("inside")
+                style.length = style.length + 1
             end
         end
         self.cursorIndex = self.cursorIndex + 1
