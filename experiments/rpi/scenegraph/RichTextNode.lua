@@ -1,6 +1,7 @@
 local EB = require("eventbus")
 FT = require("freetype")
 local k = require("keyboard_constants")
+local FM = require("FocusManager").getShared()
 
 
 local plain_font = FT.loadFont("ssp-reg.ttf","default",18)
@@ -183,7 +184,9 @@ end
 function RichTextNode:draw(scene)
     self.bg:draw(scene)
     self:render(self.lines,scene)
-    self.cursor:draw(scene)
+    if(FM:isFocused(self)) then
+        self.cursor:draw(scene)
+    end
 end
 
 function RichTextNode:update()
@@ -277,6 +280,7 @@ end
 
 
 function RichTextNode:keypressHandler(e)
+    if(not FM:isFocused(self)) then return end
     if(e.enter) then
 --        EB:fire("action",{source=sf})
 --        return

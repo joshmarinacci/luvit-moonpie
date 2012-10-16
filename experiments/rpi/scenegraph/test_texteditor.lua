@@ -4,6 +4,7 @@ package.path = package.path .. ";../?.lua"
 local pi = require("moonpie")
 local scene = require("Scene")
 local EB = require("eventbus").getShared()
+local FM = require("FocusManager").getShared()
 
 scene.window = pi.createFullscreenWindow()
 scene:init()
@@ -31,6 +32,9 @@ scene.add(text_editor)
 
 text_editor.str = "1234\n56789 123456789 123456789 123456789"
 table.insert(text_editor.styles, {start=6,length=3,name="bold"})
+
+FM:setFocusedNode(text_editor)
+
 --text_editor.styles[1] = { start=6,  length=3, name="bold", view=view2}
 --rt.styles[2] = { start=11,  length=4, name="bold", view=view2}
 --rt.styles[3] = { start=40,  length=4, name="bold", view=view2}
