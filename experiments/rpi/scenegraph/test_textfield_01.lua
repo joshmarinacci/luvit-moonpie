@@ -9,9 +9,7 @@ scene.window = pi.createFullscreenWindow()
 print('window = ', scene.window)
 scene.init()
 require ("RectNode")
-RectNode.loadShader()
 require ("TextNode")
-TextNode.loadShader()
 require("TextField")
 
 -- create a button
