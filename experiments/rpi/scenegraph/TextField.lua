@@ -29,7 +29,8 @@ function TextField:init()
     
     EB:on("keypress",function(e)
         if(e.enter) then
-            EB:fire("action",{source=sf})
+            sf.textstring = sf.text.textstring
+            EB:fire("action",{source=sf,text=sf.text.textstring})
             return
         end
         
@@ -178,7 +179,8 @@ function TextField:recalcCursor()
         local n = string.byte(self.text.textstring,i)
         xoff = xoff + metrics[n].advance
     end
-    self.cursor.x = 270 + xoff
+    self.cursor.x = self.x + xoff
+    self.cursor.y = self.y
 end
 
 function TextField:draw(scene)

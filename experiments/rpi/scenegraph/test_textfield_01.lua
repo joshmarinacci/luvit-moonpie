@@ -12,15 +12,19 @@ require ("RectNode")
 require ("TextNode")
 require("TextField")
 
--- create a button
-local button = TextField:new{
+-- create a textfield
+local tf1 = TextField:new{
     x = 0,
     y = 0,
     text = "Engage!"
 }
-
 -- add it to the scene
-scene.add(button)
+scene.add(tf1)
 
+
+local g = GroupNode:new{x=100,y=100}
+local tf2 = TextField:new {x=0,y=0,text="Activate!"}
+g:add(tf2)
+scene.add(g)
 
 scene.loop()
