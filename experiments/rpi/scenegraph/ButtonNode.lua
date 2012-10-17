@@ -49,13 +49,25 @@ function ButtonNode:init()
         else
         end
     end)
+    
+    local w,h = self.text.font:measure(self.text.textstring)
+    
+    self.bg.width = w+10*2
+    self.bg.height = h+5*2
+    self.text.y = self.y -5/2
+    self.bg:update()
 end
 function ButtonNode:update()
+    local w,h = self.text.font:measure(self.text.textstring)
+    
+    self.bg.width = w+10*2
+    self.bg.height = h+5*2
+    self.text.y = self.y -5/2
+    
     self.bg.x = self.x
     self.bg.y = self.y
     self.bg:update()
     self.text.x = 10+self.x
-    self.text.y = 10+self.y
 end
 
 function ButtonNode:draw(scene)

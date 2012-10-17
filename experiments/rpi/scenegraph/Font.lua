@@ -153,5 +153,20 @@ function Font:new(file,name,size)
     return setmetatable({file=file,name=name,size=size},Font)
 end
 
+function Font:measure(str) 
+    local w = 0
+    local h = 0
+    for i=1,#str,1 do
+        local ch = string.byte(string.sub(str,i,i),1)
+        local m = self.metrics[ch]
+        w = w + m.advance
+        if m.h > h then
+            h = m.h
+        end
+    end
+    
+    return w,h
+end
+
 
 return Font
