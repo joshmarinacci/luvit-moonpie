@@ -29,10 +29,10 @@ function ButtonNode:contains(p)
     return false
 end
 function ButtonNode:init()
-    self.bg = RectNode:new{x=self.x,y=self.y,width=200,height=40,color={0,1,0}}
-    self.bg:init()
-    self.text = TextNode:new{x=10+self.x,y=self.y,color={0,0,0}, textstring=self.text}
-    self.text:init()
+    self._bg = RectNode:new{x=self.x,y=self.y,width=200,height=40,color={0,1,0}}
+    self._bg:init()
+    self._text = TextNode:new{x=10+self.x,y=self.y,color={0,0,0}, textstring=self.text}
+    self._text:init()
     
     EB:on("mousepress",function(e)
         if not self.enabled then return end
@@ -46,39 +46,39 @@ function ButtonNode:init()
             self.pressed = true
             self.selected = not self.selected
             EB:fire("action",{kind="action",target=self})
-        else
         end
     end)
     
-    local w,h = self.text.font:measure(self.text.textstring)
+    local w,h = self._text.font:measure(self.text)
     
-    self.bg.width = w+10*2
-    self.bg.height = h+5*2
-    self.text.y = self.y -5/2
-    self.bg:update()
+    self._bg.width = w+10*2
+    self._bg.height = h+5*2
+    self._text.y = self.y -5/2
+    self._bg:update()
 end
 function ButtonNode:update()
-    local w,h = self.text.font:measure(self.text.textstring)
+    local w,h = self._text.font:measure(self.text)
     
-    self.bg.width = w+10*2
-    self.bg.height = h+5*2
-    self.text.y = self.y -5/2
+    self._bg.width = w+10*2
+    self._bg.height = h+5*2
+    self._text.y = self.y -5/2
     
-    self.bg.x = self.x
-    self.bg.y = self.y
-    self.bg:update()
-    self.text.x = 10+self.x
+    self._bg.x = self.x
+    self._bg.y = self.y
+    self._bg:update()
+    self._text.x = 10+self.x
+    self._text.textstring = self.text
 end
 
 function ButtonNode:draw(scene)
     if(self.selected and self.selectable) then
-        self.bg.color = {1,0,1}
+        self._bg.color = {1,0,1}
     else 
-        self.bg.color = {0,1,0}
+        self._bg.color = {0,1,0}
     end
     if not self.enabled then
-        self.bg.color = {0.6,0.9,0.6}
+        self._bg.color = {0.6,0.9,0.6}
     end
-    self.bg:draw(scene)
-    self.text:draw(scene)
+    self._bg:draw(scene)
+    self._text:draw(scene)
 end

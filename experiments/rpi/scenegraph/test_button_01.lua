@@ -41,5 +41,17 @@ scene.add(ButtonNode:new{text="disabled",x=10,y=200, enabled=false})
 scene.add(ButtonNode:new{text="no select",x=10,y=300, selectable=false})
 
 
+local actbut = ButtonNode:new {text="change",x=10,y=350}
+scene.add(actbut)
+local targbut = ButtonNode:new {text="be changed",x=200,y=350}
+scene.add(targbut)
+EB:on("action",function(e)
+    if e.target == actbut then
+        targbut.text = "it is done"
+        targbut:update()
+    end
+end)
+
+
 
 scene.loop()
