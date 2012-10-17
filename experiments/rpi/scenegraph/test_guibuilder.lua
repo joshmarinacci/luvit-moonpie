@@ -73,6 +73,10 @@ propGroup:add(anchorPanel.top)
 propGroup:add(anchorPanel.lbottom)
 propGroup:add(anchorPanel.bottom)
 
+propGroup:add(TextNode:new{x=0,y=230,textstring="text:", color=black})
+propGroup.textbox = TextField:new {x=80,y=230,text='---'}
+propGroup:add(propGroup.textbox)
+
 local selection = RectNode:new {x=0,y=0,width=10,height=10, color={1,1,0}}
 scene.add(selection)
 
@@ -107,6 +111,10 @@ function selectNode(n)
     propTextfieldVarname:update()
     for name,node in pairs(anchorPanel) do
         node.enabled = true
+    end
+    if n.text ~= nil then
+        propGroup.textbox.textstring = n.text
+        propGroup.textbox:update()
     end
 end
 
