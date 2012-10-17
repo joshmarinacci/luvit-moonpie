@@ -5,16 +5,18 @@ local clip = require("Clipboard").getShared()
 
 TextField = {
     col=0,
-    selection=nil
+    selection=nil,
+    x=0,
+    y=0,
 }
 function TextField:init()
-    self.bg = RectNode:new{x=260, y=550, width=500-20, height=40, color={1,1,1}}
+    self.bg = RectNode:new{x=self.x, y=self.y, width=200, height=30, color={1,1,1}}
     self.bg:init()
-    self.text = TextNode:new{x=270, y=550, textstring="list", color={0,0,0}}
+    self.text = TextNode:new{x=self.x+5, y=self.y+5, textstring="list", color={0,0,0}}
     self.text:init()
-    self.cursor = RectNode:new{x=270,y=554, width=2, height=30, color={1,0,0}}
+    self.cursor = RectNode:new{x=0,y=0, width=2, height=30, color={1,0,0}}
     self.cursor:init()
-    self.selectionNode = RectNode:new{x=270,y=554, width=2, height=30, color={0,1,0}}
+    self.selectionNode = RectNode:new{x=0,y=0, width=2, height=30, color={0,1,0}}
     self.selectionNode:init()
     local sf = self;
     
