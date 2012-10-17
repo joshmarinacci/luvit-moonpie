@@ -18,6 +18,7 @@ RectNode.width = 50
 RectNode.height = 50
 RectNode.color = {0.0,0.0,1.0}
 RectNode.shaderloaded = false
+RectNode.visible = true
 
 function RectNode.loadShader()
     if(RectNode.shaderloaded) then return end
@@ -96,6 +97,7 @@ function RectNode:update()
 end
 
 function RectNode:draw(scene)
+    if not self.visible then return end
     pi.gles.glUseProgram( RectNode.shader )
     pi.gles.glUniformMatrix4fv(RectNode.projectionSlot, 1, pi.GL_FALSE, scene.projection )
 --    printMatrix(scene.modelview);
