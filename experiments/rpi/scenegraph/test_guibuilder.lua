@@ -101,6 +101,9 @@ function selectNode(n)
     selection:update()
     propTextfieldVarname.textstring = n.varname
     anchorPanel.left.selected = (n.anchorLeft == true)
+    anchorPanel.right.selected = (n.anchorRight == true)
+    anchorPanel.top.selected = (n.anchorTop == true)
+    anchorPanel.bottom.selected = (n.anchorBottom == true)
     propTextfieldVarname:update()
     for name,node in pairs(anchorPanel) do
         node.enabled = true
@@ -175,12 +178,11 @@ EB:on("mouserelease",function(e)
 end)
 
 EB:on("action",function(e)
-    if(e.target == anchorPanel.left) then
-        if(selection.node ~= nil) then
-            selection.node.anchorLeft = anchorPanel.left.selected
-            print("updating the anchor to  ", selection.node.anchorLeft )
-        end
-    end
+    if(selection.node == nil) then return end
+    if(e.target == anchorPanel.left) then  selection.node.anchorLeft = e.target.selected end
+    if(e.target == anchorPanel.right) then  selection.node.anchorRight = e.target.selected end
+    if(e.target == anchorPanel.top) then  selection.node.anchorTop = e.target.selected end
+    if(e.target == anchorPanel.bottom) then  selection.node.anchorBottom = e.target.selected end
 end)
 
 EB:on("action",function(e)
