@@ -10,6 +10,8 @@ ButtonNode.y = 0
 ButtonNode.text = "--no text--"
 ButtonNode.pressed = false
 ButtonNode.selected = false
+ButtonNode.selectable = true
+ButtonNode.enabled = true
 
 function ButtonNode:new(o) 
     o = o or {}
@@ -33,6 +35,7 @@ function ButtonNode:init()
     self.text:init()
     
     EB:on("mousepress",function(e)
+        if not self.enabled then return end
         local p = {x=e.x,y=e.y}
         if(self.parent ~= nil) then
             p.x = p.x - self.parent.x
@@ -47,12 +50,22 @@ function ButtonNode:init()
         end
     end)
 end
+function ButtonNode:update()
+    self.bg.x = self.x
+    self.bg.y = self.y
+    self.bg:update()
+    self.text.x = 10+self.x
+    self.text.y = 10+self.y
+end
 
 function ButtonNode:draw(scene)
-    if(self.selected) then
+    if(self.selected and self.selectable) then
         self.bg.color = {1,0,1}
     else 
         self.bg.color = {0,1,0}
+    end
+    if not self.enabled then
+        self.bg.color = {0.6,0.9,0.6}
     end
     self.bg:draw(scene)
     self.text:draw(scene)

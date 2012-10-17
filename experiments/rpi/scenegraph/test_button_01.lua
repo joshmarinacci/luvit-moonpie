@@ -12,10 +12,10 @@ require ("RectNode")
 require ("TextNode")
 require("ButtonNode")
 
--- create a button
+-- create regular button
 local button = ButtonNode:new{
-    x = 100,
-    y = 100,
+    x = 0,
+    y = 0,
     text = "Engage!"
 }
 
@@ -27,6 +27,19 @@ local EB = require("eventbus").getShared()
 EB:on("action",function()
     print("an action happened. engaged = ", button.selected)
 end)
+
+
+
+-- button translated inside of a group
+local g = GroupNode:new{x=100,y=100}
+g:add(ButtonNode:new{text="Activate"})
+scene.add(g)
+-- button that is disabled
+
+scene.add(ButtonNode:new{text="disabled",x=10,y=200, enabled=false})
+-- button that doesn't support selected state
+scene.add(ButtonNode:new{text="no select",x=10,y=300, selectable=false})
+
 
 
 scene.loop()
