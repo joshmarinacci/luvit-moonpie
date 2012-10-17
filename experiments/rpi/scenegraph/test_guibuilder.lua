@@ -14,14 +14,6 @@ require("ButtonNode")
 require("TextField")
 
 
-
---[[
-left sidebar with nodes
-right sidebar with properties
-center area with neutral background
-center panel that we are dragging on to. it's white.
-
---]]
 local gray = {0.8,0.8,0.8}
 local white = {1,1,1}
 local black = {0,0,0}
@@ -38,11 +30,18 @@ scene.add(propsPanel)
 local targetPanel = RectNode:new {x=250,y=50,width=500,height=400, color=white}
 scene.add(targetPanel)
 
-local protoButton = ButtonNode:new {x=10,y=10,width=100,height=30, text="Button"}
-scene.add(protoButton)
-
-local protoLabel = TextNode:new {x=10,y=80,width=100,height=30, textstring="Label", color=black}
-scene.add(protoLabel)
+local protos = {
+    button = ButtonNode:new {x=10,y=10,width=100,height=30, text="Button"},
+    label = TextNode:new {x=10,y=80,width=100,height=30, textstring="Label", color=black},
+}
+scene.add(protos.button)
+scene.add(protos.label)
+protos.button.clone = function(self)
+    return ButtonNode:new{x=self.x,y=self.y,width=100,height=30,text="Button"}
+end
+protos.label.clone = function(self)
+    return TextNode:new {x=self.x,y=self.y, width=100,height=30, textstring="Label", color={1,0,0}}
+end
 
 
 -- the properties panel
@@ -78,7 +77,7 @@ local selection = RectNode:new {x=0,y=0,width=10,height=10, color={1,1,0}}
 scene.add(selection)
 
 
-local saveButton = ButtonNode:new {x=20,y=scene.window.height-30, width=100,height=30, text="save"}
+local saveButton = ButtonNode:new {x=20,y=scene.window.height-30, width=100,height=30, text="save", selectable=false}
 scene.add(saveButton)
 
 
@@ -103,11 +102,19 @@ function selectNode(n)
     propTextfieldVarname.textstring = n.varname
     anchorPanel.left.selected = (n.anchorLeft == true)
     propTextfieldVarname:update()
+    for name,node in pairs(anchorPanel) do
+        node.enabled = true
+    end
 end
 
 function clearSelection()
     selection.visible = false
     selection.node = nil
+    propTextfieldVarname.textstring = "---"
+    propTextfieldVarname:update()
+    for name,node in pairs(anchorPanel) do
+        node.enabled = false
+    end
 end
 
 local targetScene = {}
@@ -120,16 +127,19 @@ EB:on("mousepress",function(e)
     
     
     --check for dragging stuff out of the node panel
-    if contains(protoLabel,e) then
-        md = {}
-        print("dragging a label")
-        md.node = TextNode:new {x=protoLabel.x,y=protoLabel.y, width=100,height=30, textstring="Label", color={1,0,0}}
-        md.node.varname = "TextNode"..nodecount
-        nodecount = nodecount + 1
-        md.node:init()
-        scene.add(md.node)
-        table.insert(targetScene,md.node)
-        return
+    for i,p in pairs(protos) do
+        print("looking at",p, p.x)
+        if contains(p,e) then
+            md = {}
+            print("dragging a node from the panel")
+            md.node = p:clone()
+            md.node.varname = "node"..nodecount
+            nodecount = nodecount + 1
+            md.node:init()
+            scene.add(md.node)
+            table.insert(targetScene,md.node)
+            return
+        end
     end
     
     if contains(targetPanel,e) then
@@ -154,6 +164,9 @@ EB:on("mousemove",function(e)
     end
     md.node.x = e.x
     md.node.y = e.y
+    if(md.node.update ~= nil) then
+        md.node:update()
+    end
 end)
 EB:on("mouserelease",function(e)
     if md == nil then return end
