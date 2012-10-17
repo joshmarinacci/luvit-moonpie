@@ -8,11 +8,12 @@ TextField = {
     selection=nil,
     x=0,
     y=0,
+    textstring="...",
 }
 function TextField:init()
     self.bg = RectNode:new{x=self.x, y=self.y, width=200, height=30, color={1,1,1}}
     self.bg:init()
-    self.text = TextNode:new{x=self.x+5, y=self.y+5, textstring="list", color={0,0,0}}
+    self.text = TextNode:new{x=self.x+5, y=self.y+5, textstring=self.textstring, color={0,0,0}}
     self.text:init()
     self.cursor = RectNode:new{x=0,y=0, width=2, height=30, color={1,0,0}}
     self.cursor:init()
@@ -188,6 +189,11 @@ function TextField:draw(scene)
     self.text:draw(scene)
     self.cursor:draw(scene)
 end
+
+function TextField:update()
+    self.text.textstring = self.textstring
+end
+
 
 function TextField:new(o)
     o = o or {}
