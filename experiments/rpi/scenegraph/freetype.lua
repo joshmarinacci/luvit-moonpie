@@ -276,9 +276,9 @@ FT_LOAD_NO_AUTOHINT                  =bit.lshift(1, 15 )
 FT.freetype=freetype
 
 FT.fonts = {}
-FT.fonts['default'] = Font:new("ssp-reg.ttf","default",18)
+FT.fonts['default'] = Font:new("ssp-reg.ttf","default",14)
 FT.fonts['default'].FT = FT
-FT.fonts['bold'] = Font:new("ssp-reg.ttf","bold",18)
+FT.fonts['bold'] = Font:new("ssp-reg.ttf","bold",14)
 FT.fonts['bold'].FT = FT
 
 

@@ -54,14 +54,14 @@ local propTextfieldVarname = TextField:new {x=80,y=20,text="varname"}
 propGroup:add(propTextfieldVarname)
 
 local anchorPanel = {
-    lleft = TextNode:new {x=0,y=50, text="left", color=black},
-    left = ButtonNode:new {x=80,y=50, text="anchored", color=black},
-    lright = TextNode:new {x=0,y=100, text="right", color=black},
-    right = ButtonNode:new {x=80,y=100, text="anchored", color=black},
-    ltop = TextNode:new {x=0,y=150, text="top", color=black},
-    top = ButtonNode:new {x=80,y=150, text="anchored", color=black},
-    lbottom = TextNode:new {x=0,y=200, text="bottom", color=black},
-    bottom = ButtonNode:new {x=80,y=200, text="anchored", color=black},
+    lleft = TextNode:new    {x=0,   y=50, text="left", color=black},
+    left = ButtonNode:new   {x=80,  y=50, text="anchored", color=black},
+    lright = TextNode:new   {x=0,   y=80, text="right", color=black},
+    right = ButtonNode:new  {x=80,  y=80, text="anchored", color=black},
+    ltop = TextNode:new     {x=0,  y=110, text="top", color=black},
+    top = ButtonNode:new    {x=80, y=110, text="anchored", color=black},
+    lbottom = TextNode:new  {x=0,  y=140, text="bottom", color=black},
+    bottom = ButtonNode:new {x=80, y=140, text="anchored", color=black},
 }
 
 propGroup:add(anchorPanel.lleft)

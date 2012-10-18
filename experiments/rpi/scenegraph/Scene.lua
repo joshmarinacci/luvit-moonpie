@@ -84,8 +84,9 @@ function Scene.init()
     Scene.cursor = ImageNode:new{x=0,y=0,width=16,height=16,color={1,1,1},src="cursor.png"}
     
     Scene.debugfps =       TextNode:new{x=5,y=0,width=200,height=100,color={1,1,1},  text="0.00"}
-    Scene.debugframetime = TextNode:new{x=5,y=30,width=200,height=100,color={1,1,1}, text="0.00"}
+    Scene.debugframetime = TextNode:new{x=5,y=15,width=200,height=100,color={1,1,1}, text="0.00"}
     Scene.debuggroup = GroupNode:new{y=Scene.window.height-70}        
+    Scene.debuggroup:add(RectNode:new{x=0,y=0,width=220,height=33, color={0.4,0.4,0.4}})
     Scene.debuggroup:add(Scene.debugfps)
     Scene.debuggroup:add(Scene.debugframetime)
 end
