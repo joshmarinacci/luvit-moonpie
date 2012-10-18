@@ -34,8 +34,8 @@ local maxwidth = 300
 
 local plain_font = FT.loadFont("ssp-reg.ttf","default",20)
 local bold_font = FT.loadFont("ssp-bold.ttf","default",20)
-local text = TextNode:new{x=270, y=550, textstring="list", color={0,0,0}, font=plain_font}
-local bold = TextNode:new{x=270, y=550, textstring="list", color={0,0,0}, font=bold_font}
+local text = TextNode:new{x=270, y=550, text="list", color={0,0,0}, font=plain_font}
+local bold = TextNode:new{x=270, y=550, text="list", color={0,0,0}, font=bold_font}
 
 --scene.add(text)
 
@@ -44,7 +44,7 @@ local view1 = {
     render=function(str,style,x,y)
         text.x = x
         text.y = y
-        text.textstring = str
+        text.text = str
         text:draw(scene)
     end,
     measure = function(ch)
@@ -57,7 +57,7 @@ local view2 = {
     render=function(str,style,x,y)
         bold.x = x
         bold.y = y
-        bold.textstring = str
+        bold.text = str
         bold:draw(scene)
     end,
     measure = function(ch)

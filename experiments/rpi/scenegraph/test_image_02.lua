@@ -176,7 +176,7 @@ scene.add(obj)
 
 local EB = require("eventbus").getShared()
 EB:on("change",function()
-    slider.text.textstring = "saturation = "..(slider.value*100).."%"
+    slider.text.text = "saturation = "..(slider.value*100).."%"
     ImageNode.amount = slider.value
 end)
 

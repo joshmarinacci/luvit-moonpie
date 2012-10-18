@@ -32,7 +32,7 @@ scene.add(targetPanel)
 
 local protos = {
     button = ButtonNode:new {x=10,y=10,width=100,height=30, text="Button"},
-    label = TextNode:new {x=10,y=80,width=100,height=30, textstring="Label", color=black},
+    label = TextNode:new {x=10,y=80,width=100,height=30, text="Label", color=black},
 }
 scene.add(protos.button)
 scene.add(protos.label)
@@ -40,7 +40,7 @@ protos.button.clone = function(self)
     return ButtonNode:new{x=self.x,y=self.y,width=100,height=30,text="Button"}
 end
 protos.label.clone = function(self)
-    return TextNode:new {x=self.x,y=self.y, width=100,height=30, textstring="Label", color={1,0,0}}
+    return TextNode:new {x=self.x,y=self.y, width=100,height=30, text="Label", color={1,0,0}}
 end
 
 
@@ -48,19 +48,19 @@ end
 
 local propGroup = GroupNode:new{x=scene.window.width-200+10,y=20}
 scene.add(propGroup)
-local propLabelVarname = TextNode:new {x=0,y=20,  textstring="Variable", color=black}
+local propLabelVarname = TextNode:new {x=0,y=20,  text="Variable", color=black}
 propGroup:add(propLabelVarname)
 local propTextfieldVarname = TextField:new {x=80,y=20,text="varname"}
 propGroup:add(propTextfieldVarname)
 
 local anchorPanel = {
-    lleft = TextNode:new {x=0,y=50, textstring="left", color=black},
+    lleft = TextNode:new {x=0,y=50, text="left", color=black},
     left = ButtonNode:new {x=80,y=50, text="anchored", color=black},
-    lright = TextNode:new {x=0,y=100, textstring="right", color=black},
+    lright = TextNode:new {x=0,y=100, text="right", color=black},
     right = ButtonNode:new {x=80,y=100, text="anchored", color=black},
-    ltop = TextNode:new {x=0,y=150, textstring="top", color=black},
+    ltop = TextNode:new {x=0,y=150, text="top", color=black},
     top = ButtonNode:new {x=80,y=150, text="anchored", color=black},
-    lbottom = TextNode:new {x=0,y=200, textstring="bottom", color=black},
+    lbottom = TextNode:new {x=0,y=200, text="bottom", color=black},
     bottom = ButtonNode:new {x=80,y=200, text="anchored", color=black},
 }
 
@@ -73,11 +73,11 @@ propGroup:add(anchorPanel.top)
 propGroup:add(anchorPanel.lbottom)
 propGroup:add(anchorPanel.bottom)
 
-propGroup:add(TextNode:new{x=0,y=230,textstring="text:", color=black})
+propGroup:add(TextNode:new{x=0,y=230,text="text:", color=black})
 propGroup.textbox = TextField:new {x=80,y=230,text='---'}
 propGroup:add(propGroup.textbox)
 
-local selection = RectNode:new {x=0,y=0,width=10,height=10, color={1,1,0}}
+local selection = RectNode:new {x=0,y=0,width=10,height=10, color={1,1,0}, visible=false}
 scene.add(selection)
 
 
@@ -103,7 +103,7 @@ function selectNode(n)
     selection.visible = true
     selection.node = n
     selection:update()
-    propTextfieldVarname.textstring = n.varname
+    propTextfieldVarname.text = n.varname
     anchorPanel.left.selected = (n.anchorLeft == true)
     anchorPanel.right.selected = (n.anchorRight == true)
     anchorPanel.top.selected = (n.anchorTop == true)
@@ -113,7 +113,7 @@ function selectNode(n)
         node.enabled = true
     end
     if n.text ~= nil then
-        propGroup.textbox.textstring = n.text
+        propGroup.textbox.text = n.text
         propGroup.textbox:update()
     end
 end
@@ -121,7 +121,7 @@ end
 function clearSelection()
     selection.visible = false
     selection.node = nil
-    propTextfieldVarname.textstring = "---"
+    propTextfieldVarname.text = "---"
     propTextfieldVarname:update()
     for name,node in pairs(anchorPanel) do
         node.enabled = false
@@ -208,7 +208,7 @@ EB:on("action",function(e)
     
     print("updating the varname")
     if(selection.node ~= nil) then
-        selection.node.varname = propTextfieldVarname.textstring
+        selection.node.varname = propTextfieldVarname.text
     end
 end)
 

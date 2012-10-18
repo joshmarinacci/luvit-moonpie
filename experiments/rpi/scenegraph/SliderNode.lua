@@ -34,7 +34,7 @@ function SliderNode:init()
     self.bg:init()
     self.thumb = RectNode:new{x=0,y=0,width=10,height=self.height,color={0.1,0.1,0.1}}
     self.thumb:init()
-    self.text = TextNode:new{x=10,y=0,color={0,0,0}, textstring=self.text}
+    self.text = TextNode:new{x=10,y=0,color={0,0,0}, text=self.text}
     self.text:init()
     
     EB:on("mousepress",function(e)

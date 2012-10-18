@@ -15,7 +15,7 @@ TextNode = {}
 TextNode.x = 100
 TextNode.y = 200
 TextNode.color = {1.0,0.5,0.5}
-TextNode.textstring = "PENNY penny"
+TextNode.text = "PENNY penny"
 TextNode.shaderloaded = false
 TextNode.font = freetype.getFont("default")
 
@@ -93,8 +93,8 @@ function TextNode:draw(scene)
    local metrics = self.font.metrics
    local w = self.font.w
    local h = self.font.h
-   for i=1, #self.textstring, 1 do
-       local n = string.byte(self.textstring,i)
+   for i=1, #self.text, 1 do
+       local n = string.byte(self.text,i)
        local fx = metrics[n].x/w 
        local fo = metrics[n].w/w
        local fh = metrics[n].h/h

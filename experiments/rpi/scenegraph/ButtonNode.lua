@@ -31,7 +31,7 @@ end
 function ButtonNode:init()
     self._bg = RectNode:new{x=self.x,y=self.y,width=200,height=40,color={0,1,0}}
     self._bg:init()
-    self._text = TextNode:new{x=10+self.x,y=self.y,color={0,0,0}, textstring=self.text}
+    self._text = TextNode:new{x=10+self.x,y=self.y,color={0,0,0}, text=self.text}
     self._text:init()
     
     EB:on("mousepress",function(e)
@@ -67,7 +67,7 @@ function ButtonNode:update()
     self._bg.y = self.y
     self._bg:update()
     self._text.x = 10+self.x
-    self._text.textstring = self.text
+    self._text.text = self.text
 end
 
 function ButtonNode:draw(scene)

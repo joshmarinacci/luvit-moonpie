@@ -34,10 +34,10 @@ scene.add(RectNode:new{x=750, y=0, width=250, height=600, color=lightGray})
 
 
 -- left sidebar
-local clock = TextNode:new{x=5,y=10,textstring="12:20"}
+local clock = TextNode:new{x=5,y=10,text="12:20"}
 scene.add(clock)
 
-local weather = TextNode:new{x=5,y=40, textstring="EUG: 70o, cloudy"}
+local weather = TextNode:new{x=5,y=40, text="EUG: 70o, cloudy"}
 scene.add(weather)
 
 local bars = {}
@@ -94,14 +94,14 @@ scene.add(tf)
 
 EB:on("action",function(e)
     if(e.source == tf) then
-        tf.text.textstring = ""
+        tf.text.text = ""
     end
 end)
 
 
 EB:onTimer(1, function()
     local time = os.date("*t",os.time())
-    clock.textstring = time.hour..":"..time.min..":"..time.sec
+    clock.text = time.hour..":"..time.min..":"..time.sec
 end)
 
 EB:onTimer(6, function()
@@ -113,7 +113,7 @@ EB:onTimer(6, function()
         "snowy"
     }
     print("setting the weather")
-    weather.textstring = "EUG " .. (math.random(40,90)).."o "..w[math.random(1,4)]
+    weather.text = "EUG " .. (math.random(40,90)).."o "..w[math.random(1,4)]
 end)
 
 EB:onTimer(0.1, function()

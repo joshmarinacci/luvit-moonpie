@@ -46,7 +46,7 @@ FM:setFocusedNode(text_editor)
 local dialog = GroupNode:new{x=100, y=100}
 local dialog_bg = RectNode:new { x=0, y=0, width=600, height=400, color={1.0,0.5,0.5}}
 dialog:add(dialog_bg)
-local dialog_text = TextNode:new {x=200,y=100, textstring="styled text editor", color={0,0,0}}
+local dialog_text = TextNode:new {x=200,y=100, text="styled text editor", color={0,0,0}}
 dialog:add(dialog_text)
 local dialog_button = ButtonNode:new {x=200,y=300, text="close"}
 dialog:add(dialog_button)

@@ -29,7 +29,7 @@ scene.add(slider)
 local EB = require("eventbus").getShared()
 EB:on("change",function()
     print("an change event happened = ", slider.value*100)
-    slider.text.textstring = "value = "..(slider.value*100)
+    slider.text.text = "value = "..(slider.value*100)
 end)
 
 

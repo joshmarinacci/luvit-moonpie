@@ -8,13 +8,13 @@ TextField = {
     selection=nil,
     x=0,
     y=0,
-    textstring="...",
+    text="...",
 }
 function TextField:init()
     self.bg = RectNode:new{x=self.x, y=self.y, width=200, height=30, color={1,1,1}}
     self.bg:init()
-    self.text = TextNode:new{x=self.x+5, y=self.y+5, textstring=self.textstring, color={0,0,0}}
-    self.text:init()
+    self._text = TextNode:new{x=self.x+5, y=self.y+5, text=self.text, color={0,0,0}}
+    self._text:init()
     self.cursor = RectNode:new{x=0,y=0, width=2, height=30, color={1,0,0}}
     self.cursor:init()
     self.selectionNode = RectNode:new{x=0,y=0, width=2, height=30, color={0,1,0}}
@@ -29,12 +29,12 @@ function TextField:init()
     
     EB:on("keypress",function(e)
         if(e.enter) then
-            sf.textstring = sf.text.textstring
-            EB:fire("action",{source=sf,text=sf.text.textstring})
+            sf.text = sf._text.text
+            EB:fire("action",{source=sf,text=sf._text.text})
             return
         end
         
-        local txt = sf.text.textstring;
+        local txt = sf._text.text;
         
         if(e.backspace) then
             if self.col < 1 then 
@@ -42,7 +42,7 @@ function TextField:init()
             end
             local t1 = string.sub(txt,1,self.col-1)
             local t2 = string.sub(txt,self.col+1,#txt)
-            sf.text.textstring = t1 .. t2
+            sf._text.text = t1 .. t2
             sf:setColumn(#t1)
             return
         end
@@ -86,17 +86,17 @@ function TextField:init()
         if e.printable then
             local t1 = string.sub(txt,1,self.col)
             local t2 = string.sub(txt,self.col+1,#txt)
-            sf.text.textstring = t1 .. e.asChar() .. t2
+            sf._text.text = t1 .. e.asChar() .. t2
             sf:moveColumn(1)
             return
         end
         
     end)
-    self:setColumn(#self.text.textstring)
+    self:setColumn(#self._text.text)
 end
 
 function TextField:insertText(str)
-    local txt = self.text.textstring;
+    local txt = self._text.text;
     local t1 = string.sub(txt,1,self.col)
     local t2 = string.sub(txt,self.col+1,#txt)
     if self.selection ~= nil then
@@ -104,12 +104,12 @@ function TextField:insertText(str)
         t2 = string.sub(txt,self.selection.e,#txt)
     end
     txt = t1 .. str .. t2
-    self.text.textstring = txt
+    self._text.text = txt
 end
 
 function TextField:getSelection() 
     return string.sub(
-        self.text.textstring
+        self._text.text
         ,self.selection.s
         ,self.selection.e)
 end
@@ -132,22 +132,22 @@ function TextField:selectionRight(off)
     else
         self.selection.e = self.selection.e + 1
     end
-    if self.selection.e > #self.text.textstring then
-        self.selection.e = #self.text.textstring
+    if self.selection.e > #self._text.text then
+        self.selection.e = #self._text.text
     end
     self:updateSelection()
 end
 
 function TextField:updateSelection()
-    local x = self:calcWidth(string.sub(self.text.textstring,1,self.selection.s))
+    local x = self:calcWidth(string.sub(self._text.text,1,self.selection.s))
     self.selectionNode.x = 270 + x    
-    local w = self:calcWidth(string.sub(self.text.textstring,self.selection.s,self.selection.e))
+    local w = self:calcWidth(string.sub(self._text.text,self.selection.s,self.selection.e))
     self.selectionNode.width = w
     self.selectionNode:update()
 end
 
 function TextField:calcWidth(str)
-    local metrics = self.text.getMetrics()
+    local metrics = self._text.getMetrics()
     local xoff = 0
     for i=1, #str, 1 do
         local n = string.byte(str,i)
@@ -158,8 +158,8 @@ end
 
 function TextField:moveColumn(offset) 
     self.col = self.col + offset
-    if self.col > #self.text.textstring then
-        self.col = #self.text.textstring
+    if self.col > #self._text.text then
+        self.col = #self._text.text
     end
     if self.col < 0 then
         self.col = 0
@@ -173,10 +173,10 @@ function TextField:setColumn(col)
 end
 
 function TextField:recalcCursor()
-    local metrics = self.text:getMetrics()
+    local metrics = self._text:getMetrics()
     local xoff = 0
     for i=1, self.col, 1 do
-        local n = string.byte(self.text.textstring,i)
+        local n = string.byte(self._text.text,i)
         xoff = xoff + metrics[n].advance
     end
     self.cursor.x = self.x + xoff
@@ -188,12 +188,12 @@ function TextField:draw(scene)
     if self.selection ~= nil then
         self.selectionNode:draw(scene)
     end
-    self.text:draw(scene)
+    self._text:draw(scene)
     self.cursor:draw(scene)
 end
 
 function TextField:update()
-    self.text.textstring = self.textstring
+    self._text.text = self.text
 end
 
 
