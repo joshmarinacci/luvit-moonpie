@@ -2,16 +2,21 @@ local EB = require("eventbus")
 
 local k = require("keyboard_constants")
 local clip = require("Clipboard").getShared()
+local FM = require("FocusManager").getShared()
 
 TextField = {
     col=0,
     selection=nil,
     x=0,
     y=0,
+    width=200,
+    height=30,
     text="...",
+    enabled = true,
 }
+
 function TextField:init()
-    self.bg = RectNode:new{x=self.x, y=self.y, width=200, height=30, color={1,1,1}}
+    self.bg = RectNode:new{x=self.x, y=self.y, width=200, height=30, color={0.7,0.7,0.7}}
     self.bg:init()
     self._text = TextNode:new{x=self.x+5, y=self.y+5, text=self.text, color={0,0,0}}
     self._text:init()
@@ -21,6 +26,17 @@ function TextField:init()
     self.selectionNode:init()
     local sf = self;
     
+    EB:on("mousepress",function(e)
+        local p = {x=e.x,y=e.y}
+        if(self.parent ~= nil) then
+            p.x = p.x - self.parent.x
+            p.y = p.y - self.parent.y
+        end
+        if self:contains(p) and self.enabled then
+            FM:setFocusedNode(self)
+        end
+    end)
+    
     EB:on("keytyped",function(e)
     end)
     
@@ -28,6 +44,7 @@ function TextField:init()
     end)
     
     EB:on("keypress",function(e)
+        if not FM:isFocused(self) then return end
         if(e.enter) then
             sf.text = sf._text.text
             EB:fire("action",{source=sf,text=sf._text.text})
@@ -94,6 +111,17 @@ function TextField:init()
     end)
     self:setColumn(#self._text.text)
 end
+
+function TextField:contains(p)
+    if(p.x >= self.x and p.x <= self.x + self.width) then
+        if(p.y >= self.y and p.y <= self.y + self.height) then
+            return true
+        end
+    end
+    return false
+end
+
+
 
 function TextField:insertText(str)
     local txt = self._text.text;
@@ -184,6 +212,11 @@ function TextField:recalcCursor()
 end
 
 function TextField:draw(scene)
+    if FM:isFocused(self) then
+        self.bg.color = {1,1,1}
+    else
+        self.bg.color = {0.7,0.7,0.7}
+    end
     self.bg:draw(scene)
     if self.selection ~= nil then
         self.selectionNode:draw(scene)

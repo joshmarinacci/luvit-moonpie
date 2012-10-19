@@ -21,8 +21,8 @@ function ButtonNode:new(o)
 end
 
 function ButtonNode:contains(p)
-    if(p.x >= self.x and p.x <= self.x + 200) then
-        if(p.y >= self.y and p.y <= self.y + 40) then
+    if(p.x >= self.x and p.x <= self.x + self._bg.width) then
+        if(p.y >= self.y and p.y <= self.y + self._bg.height) then
             return true
         end
     end

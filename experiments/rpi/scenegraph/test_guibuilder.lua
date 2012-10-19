@@ -62,6 +62,8 @@ local anchorPanel = {
     top = ButtonNode:new    {x=80, y=110, text="anchored", color=black},
     lbottom = TextNode:new  {x=0,  y=140, text="bottom", color=black},
     bottom = ButtonNode:new {x=80, y=140, text="anchored", color=black},
+    lwidth = TextNode:new   {x=0,  y=170, text="width", color=black},
+    twidth = TextField:new  {x=80, y=170, text="30"},
 }
 
 propGroup:add(anchorPanel.lleft)
@@ -72,6 +74,8 @@ propGroup:add(anchorPanel.ltop)
 propGroup:add(anchorPanel.top)
 propGroup:add(anchorPanel.lbottom)
 propGroup:add(anchorPanel.bottom)
+propGroup:add(anchorPanel.lwidth)
+propGroup:add(anchorPanel.twidth)
 
 propGroup:add(TextNode:new{x=0,y=230,text="text:", color=black})
 propGroup.textbox = TextField:new {x=80,y=230,text='---'}
@@ -109,6 +113,7 @@ function selectNode(n)
     anchorPanel.top.selected = (n.anchorTop == true)
     anchorPanel.bottom.selected = (n.anchorBottom == true)
     propTextfieldVarname:update()
+    propTextfieldVarname.enabled = true
     for name,node in pairs(anchorPanel) do
         node.enabled = true
     end
@@ -126,6 +131,7 @@ function clearSelection()
     for name,node in pairs(anchorPanel) do
         node.enabled = false
     end
+    propTextfieldVarname.enabled = false
 end
 
 local targetScene = {}
@@ -212,6 +218,15 @@ EB:on("action",function(e)
     end
 end)
 
+EB:on("action",function(e)
+    if(e.source ~= anchorPanel.twidth) then return end
+    print("selected a width")
+    if selection.node == nil then return end
+    selection.node.width = anchorPanel.twidth.text + 0
+    if(selection.node.update ~=nil) then
+        selection.node:update()
+    end
+end)
 
 scene.loop()
 
