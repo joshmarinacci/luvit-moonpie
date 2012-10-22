@@ -17,6 +17,7 @@ require("TextField")
 local gray = {0.8,0.8,0.8}
 local white = {1,1,1}
 local black = {0,0,0}
+local red   = {1,0,0}
 
 local bg = RectNode:new{x=0,y=0,width=scene.window.width,height=scene.window.height, color=black}
 scene.add(bg)
@@ -33,14 +34,19 @@ scene.add(targetPanel)
 local protos = {
     button = ButtonNode:new {x=10,y=10,width=100,height=30, text="Button"},
     label = TextNode:new {x=10,y=80,width=100,height=30, text="Label", color=black},
+    rect = RectNode:new { x=10,y=120,width=100,height=30, color=red},
 }
 scene.add(protos.button)
 scene.add(protos.label)
+scene.add(protos.rect)
 protos.button.clone = function(self)
     return ButtonNode:new{x=self.x,y=self.y,width=100,height=30,text="Button"}
 end
 protos.label.clone = function(self)
     return TextNode:new {x=self.x,y=self.y, width=100,height=30, text="Label", color={1,0,0}}
+end
+protos.rect.clone = function(self)
+    return RectNode:new {x=self.x,y=self.y, width=100,height=30,color=red}
 end
 
 
@@ -64,18 +70,13 @@ local anchorPanel = {
     bottom = ButtonNode:new {x=80, y=140, text="anchored", color=black},
     lwidth = TextNode:new   {x=0,  y=170, text="width", color=black},
     twidth = TextField:new  {x=80, y=170, text="30"},
+    lheight = TextNode:new  {x=0,  y=200, text="height", color=black},
+    theight = TextField:new {x=80, y=200, text="30"},
 }
 
-propGroup:add(anchorPanel.lleft)
-propGroup:add(anchorPanel.left)
-propGroup:add(anchorPanel.lright)
-propGroup:add(anchorPanel.right)
-propGroup:add(anchorPanel.ltop)
-propGroup:add(anchorPanel.top)
-propGroup:add(anchorPanel.lbottom)
-propGroup:add(anchorPanel.bottom)
-propGroup:add(anchorPanel.lwidth)
-propGroup:add(anchorPanel.twidth)
+for name,node in pairs(anchorPanel) do
+    propGroup:add(node)
+end
 
 propGroup:add(TextNode:new{x=0,y=230,text="text:", color=black})
 propGroup.textbox = TextField:new {x=80,y=230,text='---'}
@@ -140,7 +141,6 @@ local md = nil
 local nodecount = 0
 
 EB:on("mousepress",function(e) 
-    print("mouse pressed. starting a drag")
     
     
     --check for dragging stuff out of the node panel
@@ -220,9 +220,17 @@ end)
 
 EB:on("action",function(e)
     if(e.source ~= anchorPanel.twidth) then return end
-    print("selected a width")
     if selection.node == nil then return end
     selection.node.width = anchorPanel.twidth.text + 0
+    if(selection.node.update ~=nil) then
+        selection.node:update()
+    end
+end)
+
+EB:on("action",function(e)
+    if(e.source ~= anchorPanel.theight) then return end
+    if selection.node == nil then return end
+    selection.node.height = anchorPanel.theight.text + 0
     if(selection.node.update ~=nil) then
         selection.node:update()
     end
